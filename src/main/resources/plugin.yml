@@ -1,0 +1,9 @@
+name: ultra_hardcore
+version: '${project.version}'
+main: scriptservice.ultra_hardcore.uhc
+depend:
+  - Apollo-Bukkit
+
+commands:
+  uhc:
+    description: commande holder pour l'uhc

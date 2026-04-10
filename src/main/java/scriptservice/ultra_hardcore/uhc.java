@@ -6,6 +6,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import scriptservice.ultra_hardcore.classes.*;
+import scriptservice.ultra_hardcore.commands.*;
 import scriptservice.ultra_hardcore.events.*;
 import scriptservice.ultra_hardcore.utils.*;
 
@@ -32,16 +33,18 @@ public final class uhc extends JavaPlugin {
         // events
         final playerJoinEvent playerJoinEvent = new playerJoinEvent(plugin);
         final playerQuitEvent playerQuitEvent = new playerQuitEvent(plugin);
-        // utis
+        // utils
         stringUtil = new stringUtil(plugin);
         apolloUtil = new apolloUtil(plugin);
         playerUtil = new playerUtil(plugin);
         convertionUtil = new convertionUtil(plugin);
+        // commands
+        final uhcCommand uhcCommand = new uhcCommand(plugin);
         // init
         for (initManager util: new initManager[]{
                 playerJoinEvent, playerQuitEvent, // events
                 stringUtil, apolloUtil, playerUtil, convertionUtil, // utils
-                // commands
+                uhcCommand, // commands
         }) {
             util.init(pluginManager);
         }

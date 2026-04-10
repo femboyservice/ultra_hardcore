@@ -1,5 +1,6 @@
 package scriptservice.ultra_hardcore.commands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -9,6 +10,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.StringUtil;
 import scriptservice.ultra_hardcore.classes.initManager;
 import scriptservice.ultra_hardcore.uhc;
+
+import scriptservice.ultra_hardcore.utils.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +26,14 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
     }
 
     // init
+    private stringUtil stringUtil;
+
     @Override
     public void init(PluginManager pluginManager) {
-        plugin.getCommand("uhc").setExecutor(this);
-        plugin.getCommand("uhc").setTabCompleter(this);
+        stringUtil = plugin.stringUtil;
+
+        plugin.getCommand("uhc").setExecutor(this::onCommand);
+        plugin.getCommand("uhc").setTabCompleter(this::onTabComplete);
     }
 
     // command executor
@@ -34,7 +41,41 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (commandSender instanceof Player) {
             final Player player = (Player) commandSender;
-            player.sendMessage("j'ai pas encore fait les trucs donc faut attendre");
+            final int argsAmmount = strings.length;
+            String actionName;
+
+            if (argsAmmount == 0) {
+                actionName = "null";
+                // null v : donnes des informations sur l'uhc (% d'effet, limite de stuff, etc.)
+            } else if (argsAmmount == 1) {
+                // help||start||stop||settings
+                final String subCommand = strings[0];
+                if (subCommand.equalsIgnoreCase("help")) {
+                    actionName = "help";
+                    // renvoie au joueur toutes les sous commandes auxquelles il a access
+                } else if (subCommand.equalsIgnoreCase("start")) {
+                    actionName = "start";
+                    // active le cooldown pour commencer l'uhc
+                } else if (subCommand.equalsIgnoreCase("stop")) {
+                    actionName = "stop";
+                    // stop le cooldown (si il est actif)
+                } else if (subCommand.equalsIgnoreCase("settings")) {
+                    actionName = "settings";
+                    // ouvre un inventaire avec tous les settings changeable de l'uhc
+                } else {
+                    player.sendMessage(stringUtil.gets("general-command-infindable", new Object[]{subCommand}));
+                    return true;
+                    // introuvable
+                }
+            } else {
+                // euh, trop d'args
+                player.sendMessage(stringUtil.gets("general-command-too-many-args", new Object[]{1, argsAmmount}));
+                return true;
+            }
+
+            // handle actionName
+            player.sendMessage(stringUtil.getErrorPrefix() + (ChatColor.WHITE + "J'ai pas encore fait la sous-commande ") + (ChatColor.AQUA + actionName) + (ChatColor.WHITE + ", donc faut attendre."));
+            // TODO :: commandUtil.run(actionName)
         }
 
         return true;
@@ -54,8 +95,14 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
 
         if (strings.length == 1) {
             StringUtil.copyPartialMatches(strings[0], mainCommands, completions);
-        } // TODO :: ADD STUFF SAID IN README.md !
+        }
 
         return completions;
+    }
+
+    public static class commandUtil {
+        public final void run(String actionName) {
+            // j'ai la flemme, send help
+        }
     }
 }

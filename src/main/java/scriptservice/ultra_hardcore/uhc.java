@@ -17,6 +17,7 @@ public final class uhc extends JavaPlugin {
 
     // plugin config
     @Getter private final FileConfiguration pluginConfig = getConfig();
+    @Getter private final gameConfig gameConfig = new gameConfig();
 
     // utils
     public stringUtil stringUtil;
@@ -31,6 +32,7 @@ public final class uhc extends JavaPlugin {
 
         //--// create
         // events
+        final entityDamageByEntityEvent entityDamageByEntityEvent = new entityDamageByEntityEvent(plugin);
         final playerJoinEvent playerJoinEvent = new playerJoinEvent(plugin);
         final playerQuitEvent playerQuitEvent = new playerQuitEvent(plugin);
         // utils
@@ -42,7 +44,7 @@ public final class uhc extends JavaPlugin {
         final uhcCommand uhcCommand = new uhcCommand(plugin);
         // init
         for (initManager util: new initManager[]{
-                playerJoinEvent, playerQuitEvent, // events
+                playerJoinEvent, playerQuitEvent, entityDamageByEntityEvent, // events
                 stringUtil, apolloUtil, playerUtil, convertionUtil, // utils
                 uhcCommand, // commands
         }) {

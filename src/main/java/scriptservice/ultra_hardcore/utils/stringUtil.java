@@ -23,11 +23,31 @@ public class stringUtil extends initManager {
     // per-class methods
     public final String[] getm(String codename, Object[] objects) {
         // return new String[]{};
+        switch (codename) {
+            case "uhc-command-help-op":
+                return new String[]{
+                        getInfoPrefix() + (ChatColor.WHITE + "Toutes les commandes disponibles de ") + (ChatColor.DARK_AQUA + "/") + (ChatColor.AQUA + "uhc") + (ChatColor.DARK_AQUA + " ..."),
+                        "",
+                        (ChatColor.DARK_GREEN + "   > ") + (ChatColor.WHITE + "" + ChatColor.ITALIC + "null"),
+                        (ChatColor.GREEN + "    > ") + (ChatColor.WHITE + "help"),
+                        (ChatColor.DARK_GREEN + "   > ") + (ChatColor.WHITE + "start"),
+                        (ChatColor.DARK_GREEN + "   > ") + (ChatColor.WHITE + "stop"),
+                        (ChatColor.DARK_GREEN + "   > ") + (ChatColor.WHITE + "settings")
+                };
+            case "uhc-command-help-non-op":
+                return new String[]{
+                        getInfoPrefix() + (ChatColor.WHITE + "Toutes les commandes disponibles de ") + (ChatColor.DARK_AQUA + "/") + (ChatColor.AQUA + "uhc") + (ChatColor.DARK_AQUA + " ..."),
+                        "",
+                        (ChatColor.DARK_GREEN + "   > ") + (ChatColor.WHITE + "" + ChatColor.ITALIC + "null"),
+                        (ChatColor.GREEN + "    > ") + (ChatColor.WHITE + "help")
+                };
+        }
+
         return new String[]{codename + "-not-found"};
     }
 
-    public final String getm(String codename) {
-        return gets(codename, null);
+    public final String[] getm(String codename) {
+        return getm(codename, null);
     }
 
     public final String gets(String codename, Object[] objects) {

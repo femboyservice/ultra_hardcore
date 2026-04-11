@@ -26,7 +26,7 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
     }
 
     // init
-    private stringUtil stringUtil;
+    private static stringUtil stringUtil;
 
     @Override
     public void init(PluginManager pluginManager) {
@@ -43,10 +43,11 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
             final Player player = (Player) commandSender;
             final int argsAmmount = strings.length;
             String actionName;
+            String arg = null;
 
             if (argsAmmount == 0) {
                 actionName = "null";
-                // null v : donnes des informations sur l'uhc (% d'effet, limite de stuff, etc.)
+                // null : donnes des informations sur l'uhc (% d'effet, limite de stuff, etc.)
             } else if (argsAmmount == 1) {
                 // help||start||stop||settings
                 final String subCommand = strings[0];
@@ -67,15 +68,27 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
                     return true;
                     // introuvable
                 }
+
+            } else if (argsAmmount == 2) {
+                final String subCommand = strings[0];
+                arg = strings[1];
+
+                if (subCommand.equalsIgnoreCase("help")) {
+                    actionName = "help";
+                } else {
+                    player.sendMessage(stringUtil.gets("general-command-infindable", new Object[]{subCommand}));
+                    return true;
+                    // introuvable
+                }
+
             } else {
                 // euh, trop d'args
-                player.sendMessage(stringUtil.gets("general-command-too-many-args", new Object[]{1, argsAmmount}));
+                player.sendMessage(stringUtil.gets("general-command-too-many-args", new Object[]{2, argsAmmount}));
                 return true;
             }
 
             // handle actionName
-            player.sendMessage(stringUtil.getErrorPrefix() + (ChatColor.WHITE + "J'ai pas encore fait la sous-commande ") + (ChatColor.AQUA + actionName) + (ChatColor.WHITE + ", donc faut attendre."));
-            // TODO :: commandUtil.run(actionName)
+            commandUtil.run(player, actionName, arg);
         }
 
         return true;
@@ -89,20 +102,33 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
         mainCommands.add("settings");
     }
 
+    private static final ArrayList<String> secondCommands = new ArrayList<>(); {
+        secondCommands.add("start");
+        secondCommands.add("stop");
+        secondCommands.add("settings");
+    }
+
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
         final List<String> completions = new ArrayList<>();
 
         if (strings.length == 1) {
             StringUtil.copyPartialMatches(strings[0], mainCommands, completions);
+        } else if (strings.length == 2) {
+            StringUtil.copyPartialMatches(strings[0], secondCommands, completions);
         }
 
         return completions;
     }
 
     public static class commandUtil {
-        public final void run(String actionName) {
-            // j'ai la flemme, send help
+        public static void run(Player player, String actionName, String arg) {
+            if (actionName.equals("help")) {
+                final boolean isOp = player.isOp();
+                player.sendMessage(stringUtil.getm("uhc-command" + ((arg == null) ? "" : (arg + "-")) + "-help" + (isOp ? "" : "-non") + "-op"));
+            } else {
+                player.sendMessage(stringUtil.getErrorPrefix() + (ChatColor.WHITE + "J'ai pas encore fait la sous-commande ") + (ChatColor.AQUA + actionName) + (ChatColor.WHITE + ", donc faut attendre."));
+            }
         }
     }
 }

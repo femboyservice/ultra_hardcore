@@ -11,6 +11,7 @@
 - **/uhc**
     - *null* :: donnes des informations sur l'uhc (% d'effet, limite de stuff, etc.)
     - help :: renvoie au joueur toutes les sous commandes auxquelles il a access
+        - *actionName* :: renvoie une description de *actionName*.
     - start :: active le cooldown pour commencer l'uhc
     - stop :: stop le cooldown (si il est actif)
     - settings :: ouvre un inventaire avec tous les settings changeable de l'uhc

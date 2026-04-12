@@ -5,11 +5,11 @@ import scriptservice.ultra_hardcore.uhc;
 
 public abstract class initManager {
     // consts
-    protected uhc plugin;
+    protected static uhc plugin;
 
     // constructor
     public initManager(uhc plugin) {
-        this.plugin = plugin;
+        initManager.plugin = plugin;
     }
 
     // methods

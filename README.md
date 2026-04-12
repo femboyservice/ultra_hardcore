@@ -37,3 +37,8 @@
 - [discord](https://discord.com/users/1371531622960332851) :: femboyservice
 - [namemc](https://fr.namemc.com/profile/femboyservice.1) :: femboyservice
 - [e-z.bio](https://e-z.bio/service) :: service
+----
+> [!IMPORTANT]  
+> Credits
+> - [@NickNqck](https://github.com/NickNqck)
+>   - critPatch & strengthPatch

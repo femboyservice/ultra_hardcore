@@ -14,14 +14,17 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.potion.PotionEffectType;
 import scriptservice.ultra_hardcore.classes.initManager;
 import scriptservice.ultra_hardcore.uhc;
+import scriptservice.ultra_hardcore.utils.playerUtil;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.UUID;
 
 /**
  * event usage: Global
- * description: patch critical damages to required one
+ * description: patch damages to required one
  * credits :: <a href="https://github.com/NickNqck/UHC_Meetup/blob/main/src/main/java/fr/nicknqck/PatchCritical.java">github repo found</a>, rewritten
  */
 public class entityDamageByEntityEvent extends initManager implements Listener {
@@ -30,19 +33,28 @@ public class entityDamageByEntityEvent extends initManager implements Listener {
     }
 
     // init
+    private static playerUtil playerUtil;
+
     @Override
     public void init(PluginManager pluginManager) {
+        playerUtil = plugin.playerUtil;
+
         pluginManager.registerEvents(this, plugin); // register event
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // askip c'est mieux
     public void onEvent(EntityDamageByEntityEvent event) {
+
+        event.getDamager().sendMessage("§eoriginalDamage: " + event.getDamage());
         // TODO :: check if game started, if not, cancel event (no damage !!)
-        eventUtil.criticalPatch(event, plugin.getGameConfig().getCritPercentage()); // patch crit damages
+        critUtil.patch(event, plugin.getGameConfig().getCritPercentage()); // patch crit damages
+        strengthUtil.patch(event, plugin.getGameConfig().getStrengthPercentage());
+        event.getDamager().sendMessage("§6finalDamage: " + event.getDamage());
+        event.getDamager().sendMessage("§8-----------------");
     }
 
     // event util class
-    public static class eventUtil {
+    public static class critUtil {
         //Trouver sur https://www.spigotmc.org/threads/how-to-get-attack-damage-attributemodifier-from-an-itemstack-as-displayed-on-items-in-game.284455/
         private static double getAttackDamage(ItemStack itemStack) {
             // no item sent
@@ -141,7 +153,7 @@ public class entityDamageByEntityEvent extends initManager implements Listener {
             return !df.format(event.getOriginalDamage(EntityDamageEvent.DamageModifier.BASE)).equals(df.format(attackValue));//Si les dégats sont pas pareil on return true
         }
 
-        public static void criticalPatch(EntityDamageByEntityEvent event, int percent) {
+        public static void patch(EntityDamageByEntityEvent event, int percent) {
             // not critical
             if (!isCritical(event)) {
                 return;
@@ -149,19 +161,33 @@ public class entityDamageByEntityEvent extends initManager implements Listener {
 
             // consts
             double originalDamage = event.getDamage();
-            double addedDamage = (1 + ((float) (percent / 100)));
+            double addedDamage = (1.0 + (((float) percent / 100.0)));
+            // les crits ajoute 50% de degats en plus, donc on divise par 1.5 pour enlever
+            // puis on multiplie les degats de base par le pourcentage voulu
+            double returnedDamage = (originalDamage / 1.5) * addedDamage;
+            event.setDamage(returnedDamage);
+            event.getDamager().sendMessage("§bfinalCritDamage: " + returnedDamage);
+        }
+    }
 
-            event.setDamage(
-                    (originalDamage / 1.5) // les crits ajoute 50% de degats en plus, donc on divise par 1.5 pour enlever
-                            * addedDamage // on multiplie les degats de base par le pourcentage voulu
-            );
+    public static class strengthUtil {
+        public static void patch(EntityDamageByEntityEvent event, int strengthPercent) {
+            // doesnt have strength
+            if (!((Player) event.getDamager()).hasPotionEffect(PotionEffectType.INCREASE_DAMAGE)) {
+                return;
+            }
 
-            event.getDamager().sendMessage( new String[]{
-                    "Degats de base du crit: §3" + originalDamage,
-                    "Degats nerf: " + event.getDamage() + " §8(de §350% §8à §3\" + percent + \"%§8) §3",
-                    "§8-------------------------------------"
-                    }
-            );
+            // Pour retirer la force
+            event.setDamage(event.getDamage() * plugin.getGameConfig().getStrengthMultiplier()); // j'ai fait les tests avec une épée en diams, on passe de 8.00 à 14.64 en degats
+            double force = ((double) strengthPercent / 100) + 1.0;
+
+            BigDecimal bigDecimal = new BigDecimal(event.getDamage());
+            bigDecimal = bigDecimal.setScale(2, RoundingMode.HALF_UP);
+
+            event.setDamage(bigDecimal.doubleValue());
+            event.setDamage(event.getDamage()*force);
+
+            event.getDamager().sendMessage("§cfinalStrengthDamage: " + event.getDamage());
         }
     }
 }

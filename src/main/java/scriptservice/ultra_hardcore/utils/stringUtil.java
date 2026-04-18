@@ -91,7 +91,7 @@ public class stringUtil extends initManager {
                 return getInfoPrefix() + (ChatColor.WHITE + "Le scénario ") + (ChatColor.AQUA + "" + ChatColor.BOLD + objects[0].toString()) + (ChatColor.WHITE + " a été ") + (ChatColor.RED + "désactivé") + (ChatColor.WHITE + ".");
             case "scenarios-enabled":
                 if (objects.length != 1) {return (codename+"-not-enough-args");}
-                return getInfoPrefix() + (ChatColor.WHITE + "Le scénario ") + (ChatColor.AQUA + "" + ChatColor.BOLD + objects[0].toString()) + (ChatColor.WHITE + " a été ") + (ChatColor.RED + "activé") + (ChatColor.WHITE + ".");
+            return getInfoPrefix() + (ChatColor.WHITE + "Le scénario ") + (ChatColor.AQUA + "" + ChatColor.BOLD + objects[0].toString()) + (ChatColor.WHITE + " a été ") + (ChatColor.GREEN + "activé") + (ChatColor.WHITE + ".");
 
         }
 

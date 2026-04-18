@@ -7,7 +7,8 @@
 > Format des commandes
 > - **/commande**
 >   - sousCommande :: description de la sous commande
->     - actionName :: action faite par l'actionName
+>     - actionName :: argument non-optionnel pour la commande
+>     - *optionalAction* :: argument optionnel pour la commande
 - **/uhc**
     - *null* :: donnes des informations sur l'uhc (% d'effet, limite de stuff, etc.)
     - help :: renvoie au joueur toutes les sous commandes auxquelles il a access
@@ -22,9 +23,6 @@
     - help
         - *null* :: renvoie au joueur toutes les sous commandes auxquelles il a access
         - *scenarioName* :: renvoie une description du scenario et son fonctionnement
-    - list :: ouvre un inventaire avec tt les scenarios activable / desactivable
-        - click gauche :: active / desactive le scenario
-        - click droit :: informations et features supplementaire du scenario
 
 ## config.yml
 > [!NOTE]  
@@ -39,6 +37,7 @@
 - [e-z.bio](https://e-z.bio/service) :: service
 ----
 > [!IMPORTANT]  
-> Credits
+> ## Credits
 > - [@NickNqck](https://github.com/NickNqck)
 >   - critPatch & strengthPatch
+

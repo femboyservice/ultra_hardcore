@@ -21,6 +21,9 @@ public class convertionUtil extends initManager {
     public double secondToTick(double second) {
         return (second * 20);
     }
+    public long secondToTick(int second) {
+        return (second * 20L);
+    }
 
     public double minuteToTick(double minute) {
         return secondToTick(minute * 60);

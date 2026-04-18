@@ -7,3 +7,5 @@ depend:
 commands:
   uhc:
     description: commande holder pour l'uhc
+  scenarios:
+    description: commande holder pour les scenarios

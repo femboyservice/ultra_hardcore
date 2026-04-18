@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import scriptservice.ultra_hardcore.classes.*;
 import scriptservice.ultra_hardcore.commands.*;
 import scriptservice.ultra_hardcore.events.*;
+import scriptservice.ultra_hardcore.scenarios.*;
 import scriptservice.ultra_hardcore.utils.*;
 
 public final class uhc extends JavaPlugin {
@@ -24,6 +25,8 @@ public final class uhc extends JavaPlugin {
     public apolloUtil apolloUtil;
     public playerUtil playerUtil;
     public convertionUtil convertionUtil;
+
+    public scenarioManager[] scenarioManagers;
 
     @Override
     public void onEnable() {
@@ -42,16 +45,27 @@ public final class uhc extends JavaPlugin {
         convertionUtil = new convertionUtil(plugin);
         // commands
         final uhcCommand uhcCommand = new uhcCommand(plugin);
-        // init
+        final scenariosCommand scenariosCommand = new scenariosCommand(plugin);
+        // scenarios
+        // scenarios
+        final stoneVariant scenario_stoneVariant = new stoneVariant(plugin);
+        final cutClean scenario_cutClean = new cutClean(plugin);
+
+        //--// init
         for (initManager util: new initManager[]{
                 playerJoinEvent, playerQuitEvent, entityDamageByEntityEvent, // events
                 stringUtil, apolloUtil, playerUtil, convertionUtil, // utils
-                uhcCommand, // commands
+                uhcCommand, scenariosCommand, // commands
         }) {
             util.init(pluginManager);
         }
 
-        // yaml config
+        scenarioManagers = new scenarioManager[]{scenario_cutClean, scenario_stoneVariant};
+        for (scenarioManager scenario: scenarioManagers) {
+            scenario.init(pluginManager);
+        }
+
+        //--// yaml config
         pluginConfig.options().copyDefaults(true);
         saveConfig();
     }

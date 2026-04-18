@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * event usage: Global
- * description: when a player joins, sends a message, and if in config.yml "lunarclientExclusif" is set to true, checks if the player is using lunar first, then send it.
+ * commande usage: /uhc <sub> <sub>
+ * description: uhc command holder
  */
 public class uhcCommand extends initManager implements CommandExecutor, TabCompleter {
     public uhcCommand(uhc plugin) {
@@ -47,9 +47,8 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
 
             if (argsAmmount == 0) {
                 actionName = "null";
-                // null : donnes des informations sur l'uhc (% d'effet, limite de stuff, etc.)
+                // donnes des informations sur l'uhc (% d'effet, limite de stuff, etc.)
             } else if (argsAmmount == 1) {
-                // help||start||stop||settings
                 final String subCommand = strings[0];
                 if (subCommand.equalsIgnoreCase("help")) {
                     actionName = "help";
@@ -125,7 +124,7 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
         public static void run(Player player, String actionName, String arg) {
             if (actionName.equals("help")) {
                 final boolean isOp = player.isOp();
-                player.sendMessage(stringUtil.getm("uhc-command" + ((arg == null) ? "" : (arg + "-")) + "-help" + (isOp ? "" : "-non") + "-op"));
+                player.sendMessage(stringUtil.getm("uhc-command" + ((arg == null) ? "" : ("-" + arg)) + "-help" + (isOp ? "" : "-non") + "-op"));
             } else {
                 player.sendMessage(stringUtil.getErrorPrefix() + (ChatColor.WHITE + "J'ai pas encore fait la sous-commande ") + (ChatColor.AQUA + actionName) + (ChatColor.WHITE + ", donc faut attendre."));
             }

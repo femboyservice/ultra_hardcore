@@ -9,6 +9,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import scriptservice.ultra_hardcore.classes.initManager;
 import scriptservice.ultra_hardcore.uhc;
 import scriptservice.ultra_hardcore.utils.apolloUtil;
+import scriptservice.ultra_hardcore.utils.convertionUtil;
 import scriptservice.ultra_hardcore.utils.playerUtil;
 import scriptservice.ultra_hardcore.utils.stringUtil;
 
@@ -25,6 +26,7 @@ public class playerJoinEvent extends initManager implements Listener {
     private stringUtil stringUtil;
     private apolloUtil apolloUtil;
     private playerUtil playerUtil;
+    private convertionUtil convertionUtil;
     private boolean lunarclientExclusif;
 
     @Override
@@ -32,6 +34,7 @@ public class playerJoinEvent extends initManager implements Listener {
         stringUtil = plugin.stringUtil;
         apolloUtil = plugin.apolloUtil;
         playerUtil = plugin.playerUtil;
+        convertionUtil = plugin.convertionUtil;
         lunarclientExclusif = (boolean) plugin.getPluginConfig().get("lunarclientExclusif");
 
         pluginManager.registerEvents(this, plugin); // register event
@@ -59,7 +62,7 @@ public class playerJoinEvent extends initManager implements Listener {
                     playerUtil.sendMessageToAll(joinMessage);
                     // actual event stop
                 }
-            }.runTaskLater(plugin, 40); // 40 tick, 2s
+            }.runTaskLater(plugin, convertionUtil.secondToTick(2)); // 40 tick, 2s
         } else {
             event.setJoinMessage(joinMessage);
         }

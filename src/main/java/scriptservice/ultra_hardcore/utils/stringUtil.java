@@ -41,6 +41,14 @@ public class stringUtil extends initManager {
                         (ChatColor.DARK_GREEN + "   > ") + (ChatColor.WHITE + "" + ChatColor.ITALIC + "null"),
                         (ChatColor.GREEN + "    > ") + (ChatColor.WHITE + "help")
                 };
+
+            case "scenarios-command-help":
+                return new String[]{
+                        getInfoPrefix() + (ChatColor.WHITE + "Toutes les commandes disponibles de ") + (ChatColor.DARK_AQUA + "/") + (ChatColor.AQUA + "scenarios") + (ChatColor.DARK_AQUA + " ..."),
+                        "",
+                        (ChatColor.DARK_GREEN + "   > ") + (ChatColor.WHITE + "" + ChatColor.ITALIC + "null"),
+                        (ChatColor.GREEN + "    > ") + (ChatColor.WHITE + "help")
+                };
         }
 
         return new String[]{codename + "-not-found"};
@@ -72,6 +80,19 @@ public class stringUtil extends initManager {
             case "player-leave":
                 if (objects.length != 1) {return (codename+"-not-enough-args");}
                 return (ChatColor.DARK_GRAY + "» ") + (ChatColor.GOLD + "" + ChatColor.BOLD + objects[0].toString()) + (ChatColor.YELLOW + " a quitté la partie."); // [ROUGE-«] Darkness6115 (ROUGE-27/ROUGE-30)
+
+            case "scenarios-command-no-arg":
+                return (getErrorPrefix() + "Il manque le nom du scenario.");
+            case "scenarios-command-scenario-null":
+                if (objects.length != 1) {return (codename+"-not-enough-args");}
+                return getErrorPrefix() + (ChatColor.WHITE + "Scénario ") + (ChatColor.AQUA + objects[0].toString()) + (ChatColor.WHITE + " introuvable ..?");
+            case "scenarios-disabled":
+                if (objects.length != 1) {return (codename+"-not-enough-args");}
+                return getInfoPrefix() + (ChatColor.WHITE + "Le scénario ") + (ChatColor.AQUA + "" + ChatColor.BOLD + objects[0].toString()) + (ChatColor.WHITE + " a été ") + (ChatColor.RED + "désactivé") + (ChatColor.WHITE + ".");
+            case "scenarios-enabled":
+                if (objects.length != 1) {return (codename+"-not-enough-args");}
+                return getInfoPrefix() + (ChatColor.WHITE + "Le scénario ") + (ChatColor.AQUA + "" + ChatColor.BOLD + objects[0].toString()) + (ChatColor.WHITE + " a été ") + (ChatColor.RED + "activé") + (ChatColor.WHITE + ".");
+
         }
 
         return (codename + "-not-found");

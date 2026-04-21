@@ -35,9 +35,11 @@ public final class uhc extends JavaPlugin {
 
         //--// create
         // events
-        final entityDamageByEntityEvent entityDamageByEntityEvent = new entityDamageByEntityEvent(plugin);
-        final playerJoinEvent playerJoinEvent = new playerJoinEvent(plugin);
-        final playerQuitEvent playerQuitEvent = new playerQuitEvent(plugin);
+        final enchantmentLimiter enchantmentLimiter = new enchantmentLimiter(plugin);
+        final damagePatcher damagePatcher = new damagePatcher(plugin);
+        final bucketLimiter bucketLimiter = new bucketLimiter(plugin);
+        final playerJoinQuitEvent playerJoinQuitEvent = new playerJoinQuitEvent(plugin);
+        final projectileLimiter projectileLimiter = new projectileLimiter(plugin);
         // utils
         stringUtil = new stringUtil(plugin);
         apolloUtil = new apolloUtil(plugin);
@@ -50,10 +52,9 @@ public final class uhc extends JavaPlugin {
         // scenarios
         final stoneVariant scenario_stoneVariant = new stoneVariant(plugin);
         final cutClean scenario_cutClean = new cutClean(plugin);
-
         //--// init
         for (initManager util: new initManager[]{
-                playerJoinEvent, playerQuitEvent, entityDamageByEntityEvent, // events
+                playerJoinQuitEvent, damagePatcher, bucketLimiter, projectileLimiter, enchantmentLimiter, // events
                 stringUtil, apolloUtil, playerUtil, convertionUtil, // utils
                 uhcCommand, scenariosCommand, // commands
         }) {

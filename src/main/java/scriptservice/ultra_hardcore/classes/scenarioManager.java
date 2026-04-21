@@ -3,10 +3,14 @@ package scriptservice.ultra_hardcore.classes;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import scriptservice.ultra_hardcore.uhc;
+
+import java.util.Arrays;
 
 public abstract class scenarioManager {
     // consts
@@ -19,7 +23,17 @@ public abstract class scenarioManager {
 
     // methods
     public abstract void init(PluginManager pluginManager);
-    public abstract ItemStack getItem(boolean enabled);
+
+    public final ItemStack getItem(boolean enabled) {
+        ItemStack itemStack = new ItemStack(itemMaterial);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+
+        itemMeta.setDisplayName((enabled ? ChatColor.GREEN : ChatColor.RED) + name);
+        itemMeta.setLore(Arrays.asList(itemDescription));
+
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
 
     // vars
     @Getter public String name;

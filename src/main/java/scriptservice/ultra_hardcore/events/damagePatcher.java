@@ -27,8 +27,8 @@ import java.util.UUID;
  * description: patch damages to required one
  * credits :: "github.com/NickNqck/UHC_Meetup/blob/main/src/main/java/fr/nicknqck/PatchCritical.java" github repo found, rewritten
  */
-public class entityDamageByEntityEvent extends initManager implements Listener {
-    public entityDamageByEntityEvent(uhc plugin) {
+public class damagePatcher extends initManager implements Listener {
+    public damagePatcher(uhc plugin) {
         super(plugin);
     }
 

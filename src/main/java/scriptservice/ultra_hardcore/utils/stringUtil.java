@@ -2,6 +2,7 @@ package scriptservice.ultra_hardcore.utils;
 
 import lombok.Getter;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import scriptservice.ultra_hardcore.classes.initManager;
 import scriptservice.ultra_hardcore.uhc;
@@ -74,12 +75,37 @@ public class stringUtil extends initManager {
                 if (objects.length != 1) {return (codename+"-not-enough-args");}
                 return getErrorPrefix() + (ChatColor.WHITE + "Sous-commande ") + (ChatColor.AQUA + objects[0].toString()) + (ChatColor.WHITE + " introuvable ..?");
 
+            case "enchantlimiter-too-high":
+                if (objects.length != 3) {return (codename+"-not-enough-args");}
+                return getErrorPrefix() +
+                        (ChatColor.RED + "L'enchantement ") +
+                        (ChatColor.AQUA + objects[0].toString()) +
+                        (ChatColor.RED + " a un niveau trop haut ") +
+                        (ChatColor.DARK_GRAY + "(") +
+                        (ChatColor.DARK_RED + objects[1].toString()) +
+                        (ChatColor.DARK_GRAY + ")") +
+                        (ChatColor.RED + ", il a été abaissé à sa valeur maximale de ") +
+                        (ChatColor.AQUA + objects[2].toString()) +
+                        (ChatColor.RED+".");
+
+            case "enchantlimiter-removed":
+                if (objects.length != 1) {return (codename+"-not-enough-args");}
+                return getErrorPrefix() + (ChatColor.RED + "L'enchantement ") +
+                        (ChatColor.AQUA + objects[0].toString()) +
+                        (ChatColor.RED + " a été supprimé car il est désactivé.");
+
+
             case "player-join":
                 if (objects.length != 1) {return (codename+"-not-enough-args");}
                 return (ChatColor.DARK_GRAY + "» ") + (ChatColor.GOLD + "" + ChatColor.BOLD + objects[0].toString()) + (ChatColor.YELLOW + " a rejoint la partie."); // [VERT-»] Darkness6115 (VERT-28/VERT-30)
             case "player-leave":
                 if (objects.length != 1) {return (codename+"-not-enough-args");}
                 return (ChatColor.DARK_GRAY + "» ") + (ChatColor.GOLD + "" + ChatColor.BOLD + objects[0].toString()) + (ChatColor.YELLOW + " a quitté la partie."); // [ROUGE-«] Darkness6115 (ROUGE-27/ROUGE-30)
+
+            case "cannot-interact-block":
+                return getErrorPrefix() + (ChatColor.RED + "Vous ne pouvez pas interagir avec ce bloc.");
+            case "cannot-interact-item":
+                return getErrorPrefix() + (ChatColor.RED + "Vous ne pouvez pas interagir avec cette item.");
 
             case "scenarios-command-no-arg":
                 return (getErrorPrefix() + "Il manque le nom du scenario.");
@@ -100,5 +126,30 @@ public class stringUtil extends initManager {
 
     public final String gets(String codename) {
         return gets(codename, null);
+    }
+
+    // null player safe-method
+    public final void sendS(Player player, String codename, Object[] objects) {
+        if (player == null) {return;}
+
+        player.sendMessage(gets(codename, objects));
+    }
+
+    public final void sendS(Player player, String codename) {
+        if (player == null) {return;}
+
+        player.sendMessage(gets(codename, null));
+    }
+
+    public final void sendM(Player player, String codename, Object[] objects) {
+        if (player == null) {return;}
+
+        player.sendMessage(getm(codename, objects));
+    }
+
+    public final void sendM(Player player, String codename) {
+        if (player == null) {return;}
+
+        player.sendMessage(getm(codename, null));
     }
 }

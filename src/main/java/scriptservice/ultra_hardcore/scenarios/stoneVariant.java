@@ -8,13 +8,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import scriptservice.ultra_hardcore.classes.scenarioManager;
 import scriptservice.ultra_hardcore.uhc;
-
-import java.util.Arrays;
 
 /**
  * scenario usage: Stone Variant
@@ -51,18 +47,6 @@ public class stoneVariant extends scenarioManager implements Listener {
         setEnabled(true);
     }
 
-
-    // methods
-    public final ItemStack getItem(boolean enabled) {
-        ItemStack itemStack = new ItemStack(itemMaterial);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-
-        itemMeta.setDisplayName((enabled ? ChatColor.GREEN : ChatColor.RED) + name);
-        itemMeta.setLore(Arrays.asList(itemDescription));
-
-        itemStack.setItemMeta(itemMeta);
-        return itemStack;
-    }
 
     // event
     @SuppressWarnings("deprecation")

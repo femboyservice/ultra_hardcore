@@ -8,7 +8,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.Vector;
 import scriptservice.ultra_hardcore.classes.scenarioManager;
@@ -55,7 +54,7 @@ public class cutClean extends scenarioManager implements Listener {
         };
 
         itemMaterial = Material.IRON_BLOCK;
-        setEnabled(false);
+        setEnabled(true);
     }
 
     // ores
@@ -81,18 +80,6 @@ public class cutClean extends scenarioManager implements Listener {
         changedAnimalsDrop.put(Material.RAW_CHICKEN, Material.COOKED_CHICKEN);
         changedAnimalsDrop.put(Material.MUTTON, Material.COOKED_MUTTON);
         changedAnimalsDrop.put(Material.RABBIT, Material.COOKED_RABBIT);
-    }
-
-    // methods
-    public final ItemStack getItem(boolean enabled) {
-        ItemStack itemStack = new ItemStack(itemMaterial);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-
-        itemMeta.setDisplayName((enabled ? ChatColor.GREEN : ChatColor.RED) + name);
-        itemMeta.setLore(Arrays.asList(itemDescription));
-
-        itemStack.setItemMeta(itemMeta);
-        return itemStack;
     }
 
     // event

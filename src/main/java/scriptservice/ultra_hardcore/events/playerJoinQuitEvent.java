@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 import scriptservice.ultra_hardcore.classes.initManager;
@@ -17,8 +18,8 @@ import scriptservice.ultra_hardcore.utils.stringUtil;
  * event usage: Global
  * description: when a player joins, sends a message, and if in config.yml "lunarclientExclusif" is set to true, checks if the player is using lunar first, then send it.
  */
-public class playerJoinEvent extends initManager implements Listener {
-    public playerJoinEvent(uhc plugin) {
+public class playerJoinQuitEvent extends initManager implements Listener {
+    public playerJoinQuitEvent(uhc plugin) {
         super(plugin);
     }
 
@@ -41,7 +42,7 @@ public class playerJoinEvent extends initManager implements Listener {
     }
 
     @EventHandler
-    public void onEvent(PlayerJoinEvent event) {
+    public void onPlayerJoinEvent(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
         final String joinMessage = stringUtil.gets("player-join", new Object[]{player.getName()});
 
@@ -62,10 +63,15 @@ public class playerJoinEvent extends initManager implements Listener {
                     playerUtil.sendMessageToAll(joinMessage);
                     // actual event stop
                 }
-            }.runTaskLater(plugin, convertionUtil.secondToTick(2)); // 40 tick, 2s
+            }.runTaskLater(plugin, convertionUtil.secondToTick(2));
         } else {
             event.setJoinMessage(joinMessage);
         }
+    }
 
+    @EventHandler
+    public void onPlayerQuitEvent(PlayerQuitEvent event) {
+        final Player player = event.getPlayer();
+        event.setQuitMessage(stringUtil.gets("player-leave", new Object[]{player.getName()}));
     }
 }

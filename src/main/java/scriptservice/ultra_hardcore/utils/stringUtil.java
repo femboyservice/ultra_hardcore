@@ -68,12 +68,16 @@ public class stringUtil extends initManager {
                         ChatColor.AQUA + "Lunar Client" +
                         ChatColor.RED + ".";
 
+
+
             case "general-command-too-many-args":
                 if (objects.length != 2) {return (codename+"-not-enough-args");}
                 return (getErrorPrefix() + "Trop d'arguments donné dans la commande.") + ((ChatColor.DARK_GRAY + " (max: ") + (ChatColor.DARK_AQUA + objects[0].toString()) + (ChatColor.DARK_GRAY + ", given: ") + (ChatColor.DARK_AQUA + objects[1].toString()) + (ChatColor.DARK_GRAY + ")"));
             case "general-command-infindable":
                 if (objects.length != 1) {return (codename+"-not-enough-args");}
                 return getErrorPrefix() + (ChatColor.WHITE + "Sous-commande ") + (ChatColor.AQUA + objects[0].toString()) + (ChatColor.WHITE + " introuvable ..?");
+
+
 
             case "enchantlimiter-too-high":
                 if (objects.length != 3) {return (codename+"-not-enough-args");}
@@ -87,12 +91,30 @@ public class stringUtil extends initManager {
                         (ChatColor.RED + ", il a été abaissé à sa valeur maximale de ") +
                         (ChatColor.AQUA + objects[2].toString()) +
                         (ChatColor.RED+".");
-
             case "enchantlimiter-removed":
                 if (objects.length != 1) {return (codename+"-not-enough-args");}
                 return getErrorPrefix() + (ChatColor.RED + "L'enchantement ") +
                         (ChatColor.AQUA + objects[0].toString()) +
                         (ChatColor.RED + " a été supprimé car il est désactivé.");
+
+
+
+            case "quiver-arrow-limit-reached":
+                if (objects.length != 1) {return (codename+"-not-enough-args");}
+                return getInfoPrefix() + "Vous venez d'atteindre la limite de flèches. " +
+                        (ChatColor.DARK_GRAY + "(max: ") +
+                        (ChatColor.DARK_AQUA + objects[0].toString()) +
+                        (ChatColor.DARK_GRAY + ")");
+            case "quiver-pickup-feather-blocked":
+                return getErrorPrefix() + (ChatColor.RED + "Vous ne pouvez plus ramasser de plumes, vous avez déjà des flèches dans votre inventaire.");
+            case "quiver-pickup-arrow-blocked":
+                return getErrorPrefix() + (ChatColor.RED + "Vous ne pouvez plus ramasser de flèches, vous avez déjà des plumes dans votre inventaire.");
+            case "quiver-arrow-blocked":
+                if (objects.length != 1) {return (codename+"-not-enough-args");}
+                return getErrorPrefix() + ChatColor.RED + "Vous ne pouvez pas avoir plus de " + objects[0].toString() + " flèches.";
+            case "quiver-shift-click":
+                return getErrorPrefix() + ChatColor.RED + "Veuillez crafter vos flèches sans utiliser shift-click.";
+
 
 
             case "player-join":
@@ -102,10 +124,14 @@ public class stringUtil extends initManager {
                 if (objects.length != 1) {return (codename+"-not-enough-args");}
                 return (ChatColor.DARK_GRAY + "» ") + (ChatColor.GOLD + "" + ChatColor.BOLD + objects[0].toString()) + (ChatColor.YELLOW + " a quitté la partie."); // [ROUGE-«] Darkness6115 (ROUGE-27/ROUGE-30)
 
+
+
             case "cannot-interact-block":
                 return getErrorPrefix() + (ChatColor.RED + "Vous ne pouvez pas interagir avec ce bloc.");
             case "cannot-interact-item":
                 return getErrorPrefix() + (ChatColor.RED + "Vous ne pouvez pas interagir avec cette item.");
+
+
 
             case "scenarios-command-no-arg":
                 return (getErrorPrefix() + "Il manque le nom du scenario.");
@@ -131,25 +157,21 @@ public class stringUtil extends initManager {
     // null player safe-method
     public final void sendS(Player player, String codename, Object[] objects) {
         if (player == null) {return;}
-
         player.sendMessage(gets(codename, objects));
     }
 
     public final void sendS(Player player, String codename) {
         if (player == null) {return;}
-
         player.sendMessage(gets(codename, null));
     }
 
     public final void sendM(Player player, String codename, Object[] objects) {
         if (player == null) {return;}
-
         player.sendMessage(getm(codename, objects));
     }
 
     public final void sendM(Player player, String codename) {
         if (player == null) {return;}
-
         player.sendMessage(getm(codename, null));
     }
 }

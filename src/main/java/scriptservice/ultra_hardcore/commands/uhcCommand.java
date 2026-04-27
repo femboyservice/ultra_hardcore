@@ -32,8 +32,8 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
     public void init(PluginManager pluginManager) {
         stringUtil = plugin.stringUtil;
 
-        plugin.getCommand("uhc").setExecutor(this::onCommand);
-        plugin.getCommand("uhc").setTabCompleter(this::onTabComplete);
+        plugin.getCommand("uhc").setExecutor(this);
+        plugin.getCommand("uhc").setTabCompleter(this);
     }
 
     // command executor
@@ -41,14 +41,14 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (commandSender instanceof Player) {
             final Player player = (Player) commandSender;
-            final int argsAmmount = strings.length;
+            final int argsAmount = strings.length;
             String actionName;
             String arg = null;
 
-            if (argsAmmount == 0) {
+            if (argsAmount == 0) {
                 actionName = "null";
                 // donnes des informations sur l'uhc (% d'effet, limite de stuff, etc.)
-            } else if (argsAmmount == 1) {
+            } else if (argsAmount == 1) {
                 final String subCommand = strings[0];
                 if (subCommand.equalsIgnoreCase("help")) {
                     actionName = "help";
@@ -68,7 +68,7 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
                     // introuvable
                 }
 
-            } else if (argsAmmount == 2) {
+            } else if (argsAmount == 2) {
                 final String subCommand = strings[0];
                 arg = strings[1];
 
@@ -82,7 +82,7 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
 
             } else {
                 // euh, trop d'args
-                player.sendMessage(stringUtil.gets("general-command-too-many-args", new Object[]{2, argsAmmount}));
+                player.sendMessage(stringUtil.gets("general-command-too-many-args", new Object[]{2, argsAmount}));
                 return true;
             }
 

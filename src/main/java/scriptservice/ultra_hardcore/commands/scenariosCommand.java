@@ -52,8 +52,11 @@ public class scenariosCommand extends initManager implements CommandExecutor, Ta
         scenarioInventory = Bukkit.createInventory(null, 36, (ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "Scénarios"));
 
         // register commands
-        plugin.getCommand("scenarios").setExecutor(this::onCommand);
-        plugin.getCommand("scenarios").setTabCompleter(this::onTabComplete);
+        plugin.getCommand("scenarios").setExecutor(this);
+        plugin.getCommand("scenarios").setTabCompleter(this);
+
+        plugin.getCommand("sc").setExecutor(this);
+        plugin.getCommand("sc").setTabCompleter(this);
 
         // register events
         pluginManager.registerEvents(this, plugin);
@@ -115,12 +118,20 @@ public class scenariosCommand extends initManager implements CommandExecutor, Ta
         mainCommands.add("help");
     }
 
+    public ArrayList<String> secondCommands = new ArrayList<>(); {
+        secondCommands.add("quiver");
+        secondCommands.add("stonevariants");
+        secondCommands.add("cutclean");
+    }
+
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
         final List<String> completions = new ArrayList<>();
 
         if (strings.length == 1) {
             StringUtil.copyPartialMatches(strings[0], mainCommands, completions);
+        } else if (strings.length == 2) {
+            StringUtil.copyPartialMatches(strings[0], secondCommands, completions);
         }
 
         return completions;

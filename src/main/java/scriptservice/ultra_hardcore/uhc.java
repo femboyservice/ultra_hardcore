@@ -51,8 +51,10 @@ public final class uhc extends JavaPlugin {
         // scenarios
         // scenarios
         final stoneVariant scenario_stoneVariant = new stoneVariant(plugin);
+        final quiver scenario_quiver = new quiver(plugin);
         final cutClean scenario_cutClean = new cutClean(plugin);
         //--// init
+        // utils
         for (initManager util: new initManager[]{
                 playerJoinQuitEvent, damagePatcher, bucketLimiter, projectileLimiter, enchantmentLimiter, // events
                 stringUtil, apolloUtil, playerUtil, convertionUtil, // utils
@@ -61,7 +63,8 @@ public final class uhc extends JavaPlugin {
             util.init(pluginManager);
         }
 
-        scenarioManagers = new scenarioManager[]{scenario_cutClean, scenario_stoneVariant};
+        // scenarios
+        scenarioManagers = new scenarioManager[]{scenario_cutClean, scenario_stoneVariant, scenario_quiver};
         for (scenarioManager scenario: scenarioManagers) {
             scenario.init(pluginManager);
         }

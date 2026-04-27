@@ -21,6 +21,7 @@ public class gameConfig {
     @Getter @Setter private boolean pearlEnabled = false;
     @Getter @Setter private boolean lavaEnabled = false;
     @Getter @Setter private boolean waterEnabled = true;
+    @Getter @Setter private int maxArrows = 24;
 
     // enchantements related
     @Getter @Setter private int diamondProtectionMax = 2;

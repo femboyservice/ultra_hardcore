@@ -33,7 +33,7 @@ public class stoneVariant extends scenarioManager implements Listener {
         };
 
         fullDescription = new String[]{
-                plugin.stringUtil.getInfoPrefix() + (ChatColor.GRAY+"Andesite") +
+                plugin.languageUtil.getInfoPrefix() + (ChatColor.GRAY+"Andesite") +
                         (ChatColor.WHITE+", ") +
                         (ChatColor.GRAY+"Granite") +
                         (ChatColor.WHITE+" and ") +

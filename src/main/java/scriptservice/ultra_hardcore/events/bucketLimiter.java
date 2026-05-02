@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import scriptservice.ultra_hardcore.classes.initManager;
 import scriptservice.ultra_hardcore.uhc;
-import scriptservice.ultra_hardcore.utils.stringUtil;
+import scriptservice.ultra_hardcore.utils.languageUtil;
 
 /**
  * event usage: Global
@@ -23,10 +23,10 @@ public class bucketLimiter extends initManager implements Listener {
     }
 
     // init
-    private stringUtil stringUtil;
+    private languageUtil languageUtil;
     @Override
     public void init(PluginManager pluginManager) {
-        stringUtil = plugin.stringUtil;
+        languageUtil = plugin.languageUtil;
 
         pluginManager.registerEvents(this, plugin); // register event
     }
@@ -56,7 +56,7 @@ public class bucketLimiter extends initManager implements Listener {
                 blockClicked.setType(blockClicked.getType());
 
                 // send message
-                player.sendMessage(stringUtil.gets("cannot-interact-block"));
+                player.sendMessage(languageUtil.gets("cannot-interact-block"));
 
                 // send updates to fix ghost blocks
                 player.sendBlockChange(blockClicked.getLocation(), blockClicked.getType(), blockClicked.getData());

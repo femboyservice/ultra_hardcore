@@ -38,7 +38,7 @@ public class cutClean extends scenarioManager implements Listener {
         };
 
         fullDescription = new String[]{
-                plugin.stringUtil.getInfoPrefix() + (ChatColor.YELLOW+"Ores") +
+                plugin.languageUtil.getInfoPrefix() + (ChatColor.YELLOW+"Ores") +
                         (ChatColor.WHITE+" and ") +
                         (ChatColor.GOLD+"Foods") +
                         (ChatColor.WHITE+" are cooked when dropped, this includes:"),

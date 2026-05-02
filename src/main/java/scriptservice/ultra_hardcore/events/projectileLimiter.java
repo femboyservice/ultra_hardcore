@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import scriptservice.ultra_hardcore.classes.initManager;
 import scriptservice.ultra_hardcore.uhc;
-import scriptservice.ultra_hardcore.utils.stringUtil;
+import scriptservice.ultra_hardcore.utils.languageUtil;
 
 /**
  * event usage: Global
@@ -24,11 +24,11 @@ public class projectileLimiter extends initManager implements Listener {
     }
 
     // init
-    private stringUtil stringUtil;
+    private languageUtil languageUtil;
 
     @Override
     public void init(PluginManager pluginManager) {
-        stringUtil = plugin.stringUtil;
+        languageUtil = plugin.languageUtil;
 
         pluginManager.registerEvents(this, plugin); // register event
     }
@@ -46,7 +46,7 @@ public class projectileLimiter extends initManager implements Listener {
                     event.setCancelled(true);
 
                     // send message
-                    player.sendMessage(stringUtil.gets("cannot-interact-item"));
+                    player.sendMessage(languageUtil.gets("cannot-interact-item"));
 
                     // give item (if not creative or spec)
                     if (player.getGameMode() != GameMode.CREATIVE && player.getGameMode() != GameMode.SPECTATOR) {

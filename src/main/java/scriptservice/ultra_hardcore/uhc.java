@@ -11,6 +11,8 @@ import scriptservice.ultra_hardcore.events.*;
 import scriptservice.ultra_hardcore.scenarios.*;
 import scriptservice.ultra_hardcore.utils.*;
 
+import java.util.ArrayList;
+
 public final class uhc extends JavaPlugin {
     //--// definition
     // juste pour faire chier qqn
@@ -21,10 +23,12 @@ public final class uhc extends JavaPlugin {
     @Getter private final gameConfig gameConfig = new gameConfig();
 
     // utils
-    public stringUtil stringUtil;
     public apolloUtil apolloUtil;
-    public playerUtil playerUtil;
     public convertionUtil convertionUtil;
+    public gameUtil gameUtil;
+    public languageUtil languageUtil;
+    public playerUtil playerUtil;
+    public timerUtil timerUtil;
 
     public scenarioManager[] scenarioManagers;
 
@@ -41,14 +45,15 @@ public final class uhc extends JavaPlugin {
         final playerJoinQuitEvent playerJoinQuitEvent = new playerJoinQuitEvent(plugin);
         final projectileLimiter projectileLimiter = new projectileLimiter(plugin);
         // utils
-        stringUtil = new stringUtil(plugin);
         apolloUtil = new apolloUtil(plugin);
-        playerUtil = new playerUtil(plugin);
         convertionUtil = new convertionUtil(plugin);
+        gameUtil = new gameUtil(plugin);
+        languageUtil = new languageUtil(plugin);
+        playerUtil = new playerUtil(plugin);
+        timerUtil = new timerUtil(plugin);
         // commands
         final uhcCommand uhcCommand = new uhcCommand(plugin);
         final scenariosCommand scenariosCommand = new scenariosCommand(plugin);
-        // scenarios
         // scenarios
         final stoneVariant scenario_stoneVariant = new stoneVariant(plugin);
         final quiver scenario_quiver = new quiver(plugin);
@@ -57,7 +62,7 @@ public final class uhc extends JavaPlugin {
         // utils
         for (initManager util: new initManager[]{
                 playerJoinQuitEvent, damagePatcher, bucketLimiter, projectileLimiter, enchantmentLimiter, // events
-                stringUtil, apolloUtil, playerUtil, convertionUtil, // utils
+                languageUtil, apolloUtil, playerUtil, convertionUtil, timerUtil, gameUtil, // utils
                 uhcCommand, scenariosCommand, // commands
         }) {
             util.init(pluginManager);

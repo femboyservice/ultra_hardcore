@@ -15,7 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import scriptservice.ultra_hardcore.classes.initManager;
 import scriptservice.ultra_hardcore.uhc;
-import scriptservice.ultra_hardcore.utils.stringUtil;
+import scriptservice.ultra_hardcore.utils.languageUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,11 +31,11 @@ public class enchantmentLimiter extends initManager implements Listener {
     }
 
     // init
-    private stringUtil stringUtil;
+    private languageUtil languageUtil;
 
     @Override
     public void init(PluginManager pluginManager) {
-        stringUtil = plugin.stringUtil;
+        languageUtil = plugin.languageUtil;
         pluginManager.registerEvents(this, plugin); // register event
     }
 
@@ -90,16 +90,26 @@ public class enchantmentLimiter extends initManager implements Listener {
 
     @EventHandler
     public void onEnchantItemEvent(EnchantItemEvent event) {
+        // prevent bad event format
+        if (event == null) {return;}
+        if (event.getItem() == null) {return;}
+
         final Player player = event.getEnchanter();
         final ItemStack enchantedItem = event.getItem();
         Map<Enchantment, Integer> enchantments = event.getEnchantsToAdd(); // enchantement, enchantementLevel
 
-        for (Enchantment enchantment: enchantments.keySet()) {
+        if (enchantments == null) {return;}
+        if (enchantments.isEmpty()) {return;}
+
+        for (Map.Entry<Enchantment, Integer> entry: new HashMap<>(enchantments).entrySet()) { // woa | blehhh ConcurrentModificationException
+            final Enchantment enchantment = entry.getKey();
+            final int enchantementLevel = entry.getValue();
+
             // not modified one
+            if (enchantment == null) {continue;}
             if (!modifiedEnchantments.contains(enchantment)) {continue;}
 
             // consts
-            final int enchantementLevel = enchantments.get(enchantment);
             int maxLevel = getMaxLevel(enchantedItem, enchantment);
 
             // en dessous du cap => cbon
@@ -107,10 +117,10 @@ public class enchantmentLimiter extends initManager implements Listener {
 
             if (maxLevel > 0) {
                 enchantments.replace(enchantment, enchantementLevel, maxLevel);
-                stringUtil.sendS(player, "enchantlimiter-too-high", new Object[]{enchantmentNames.getOrDefault(enchantment, enchantment.getName()), enchantementLevel, maxLevel});
+                languageUtil.sendS(player, "enchantlimiter-too-high", new Object[]{enchantmentNames.getOrDefault(enchantment, enchantment.getName()), enchantementLevel, maxLevel});
             } else {
                 enchantments.remove(enchantment);
-                stringUtil.sendS(player, "enchantlimiter-removed", new Object[]{enchantmentNames.getOrDefault(enchantment, enchantment.getName())});
+                languageUtil.sendS(player, "enchantlimiter-removed", new Object[]{enchantmentNames.getOrDefault(enchantment, enchantment.getName())});
             }
         }
     }
@@ -150,28 +160,31 @@ public class enchantmentLimiter extends initManager implements Listener {
         Map<Enchantment, Integer> enchantments = itemMeta.getEnchants();
         boolean modifiedOutput = false;
 
-        for (Enchantment enchantment: enchantments.keySet()) {
-            // not modified one
-            if (!modifiedEnchantments.contains(enchantment)) {continue;}
+        if (enchantments != null) {
+            for (Map.Entry<Enchantment, Integer> entry: new HashMap<>(enchantments).entrySet()) { // cme ?
+                // consts
+                final Enchantment enchantment = entry.getKey();
+                final int enchantementLevel = entry.getValue();
+                int maxLevel = getMaxLevel(resultItem, enchantment);
 
-            // consts
-            final int enchantementLevel = enchantments.get(enchantment);
-            int maxLevel = getMaxLevel(resultItem, enchantment);
+                // not modified one
+                if (!modifiedEnchantments.contains(enchantment)) {continue;}
 
-            // en dessous du cap => cbon
-            if (enchantementLevel <= maxLevel) {continue;}
+                // en dessous du cap => cbon
+                if (enchantementLevel <= maxLevel) {continue;}
 
-            if (maxLevel > 0) {
-                resultItem.removeEnchantment(enchantment);
-                resultItem.addUnsafeEnchantment(enchantment, maxLevel);
-                modifiedOutput = true;
+                if (maxLevel > 0) {
+                    resultItem.removeEnchantment(enchantment);
+                    resultItem.addUnsafeEnchantment(enchantment, maxLevel);
+                    modifiedOutput = true;
 
-                stringUtil.sendS(player, "enchantlimiter-too-high", new Object[]{enchantmentNames.getOrDefault(enchantment, enchantment.getName()), enchantementLevel, maxLevel});
-            } else {
-                resultItem.removeEnchantment(enchantment);
-                modifiedOutput = true;
+                    languageUtil.sendS(player, "enchantlimiter-too-high", new Object[]{enchantmentNames.getOrDefault(enchantment, enchantment.getName()), enchantementLevel, maxLevel});
+                } else {
+                    resultItem.removeEnchantment(enchantment);
+                    modifiedOutput = true;
 
-                stringUtil.sendS(player, "enchantlimiter-removed", new Object[]{enchantmentNames.getOrDefault(enchantment, enchantment.getName())});
+                    languageUtil.sendS(player, "enchantlimiter-removed", new Object[]{enchantmentNames.getOrDefault(enchantment, enchantment.getName())});
+                }
             }
         }
 

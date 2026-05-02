@@ -3,6 +3,7 @@ package scriptservice.ultra_hardcore.utils;
 import com.lunarclient.apollo.Apollo;
 import com.lunarclient.apollo.module.ApolloModuleManager;
 import com.lunarclient.apollo.module.modsetting.ModSettingModule;
+import com.lunarclient.apollo.module.serverlink.ServerLinkModule;
 import com.lunarclient.apollo.player.ApolloPlayerManager;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -19,6 +20,7 @@ public class apolloUtil extends initManager {
     @Getter private final ApolloPlayerManager apolloPlayerManager = Apollo.getPlayerManager();
     @Getter private final ApolloModuleManager apolloModuleManager = Apollo.getModuleManager();
     @Getter private final ModSettingModule modSettingModule = getApolloModuleManager().getModule(ModSettingModule.class);
+    @Getter private final ServerLinkModule serverLinkModule = getApolloModuleManager().getModule(ServerLinkModule.class); // TODO
 
     // init
     @Override

@@ -1,6 +1,7 @@
 package scriptservice.ultra_hardcore.commands;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -9,12 +10,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.StringUtil;
 import scriptservice.ultra_hardcore.classes.initManager;
+import scriptservice.ultra_hardcore.classes.states;
 import scriptservice.ultra_hardcore.uhc;
 
 import scriptservice.ultra_hardcore.utils.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * commande usage: /uhc <sub> <sub>
@@ -26,11 +27,13 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
     }
 
     // init
-    private static stringUtil stringUtil;
+    private static languageUtil languageUtil;
+    private static gameUtil gameUtil;
 
     @Override
     public void init(PluginManager pluginManager) {
-        stringUtil = plugin.stringUtil;
+        languageUtil = plugin.languageUtil;
+        gameUtil = plugin.gameUtil;
 
         plugin.getCommand("uhc").setExecutor(this);
         plugin.getCommand("uhc").setTabCompleter(this);
@@ -63,7 +66,7 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
                     actionName = "settings";
                     // ouvre un inventaire avec tous les settings changeable de l'uhc
                 } else {
-                    player.sendMessage(stringUtil.gets("general-command-infindable", new Object[]{subCommand}));
+                    player.sendMessage(languageUtil.gets("general-command-infindable", new Object[]{subCommand}));
                     return true;
                     // introuvable
                 }
@@ -75,14 +78,14 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
                 if (subCommand.equalsIgnoreCase("help")) {
                     actionName = "help";
                 } else {
-                    player.sendMessage(stringUtil.gets("general-command-infindable", new Object[]{subCommand}));
+                    player.sendMessage(languageUtil.gets("general-command-infindable", new Object[]{subCommand}));
                     return true;
                     // introuvable
                 }
 
             } else {
                 // euh, trop d'args
-                player.sendMessage(stringUtil.gets("general-command-too-many-args", new Object[]{2, argsAmount}));
+                player.sendMessage(languageUtil.gets("general-command-too-many-args", new Object[]{2, argsAmount}));
                 return true;
             }
 
@@ -121,12 +124,80 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
     }
 
     public static class commandUtil {
+        public static void commandStart(Player player) {
+            if (player == null) {return;}
+
+            // not op
+            final boolean isOp = player.isOp();
+            if (!isOp) {
+                languageUtil.sendS(player, "noperms");
+                return;
+            }
+
+            // already started
+            if (plugin.getGameConfig().getGameState() != states.WAIT) {
+                languageUtil.sendS(player, "uhc-command-start-already");
+                return;
+            }
+
+            // launch
+            gameUtil.startSTART();
+        }
+
+        public static void commandStop(Player player) {
+            if (player == null) {return;}
+
+            // not op
+            final boolean isOp = player.isOp();
+            if (!isOp) {
+                languageUtil.sendS(player, "noperms");
+                return;
+            }
+
+            // stop for each gameState
+            final states gameState = plugin.getGameConfig().getGameState();
+            switch (gameState) {
+                case WAIT:
+                    // nothing to stop (srupid)
+                    languageUtil.sendS(player, "uhc-command-stop-nothing");
+                    return;
+
+
+                case START:
+                    // stop start timers ?
+                    gameUtil.stopSTART();
+                    return;
+
+
+                case TELEPORT:
+                    return; // cuz fuck you (you had 10 SECONDS !!)
+
+                case PREGAME:
+                    // clear player inventories, effects, extra health, remove scoreboard
+
+                case GAME:
+                    // same as pregame ??
+
+                case END:
+                    player.sendMessage(ChatColor.RED + "pas fait");
+                    return;
+
+
+                default:
+                    return; // not possible? || who tf set state to CHAT_(DISABLED || ENABLED) ??
+            }
+        }
+
         public static void run(Player player, String actionName, String arg) {
             if (actionName.equals("help")) {
                 final boolean isOp = player.isOp();
-                player.sendMessage(stringUtil.getm("uhc-command" + ((arg == null) ? "" : ("-" + arg)) + "-help" + (isOp ? "" : "-non") + "-op"));
+                player.sendMessage(languageUtil.getm("uhc-command" + ((arg == null) ? "" : ("-" + arg)) + "-help" + (isOp ? "" : "-non") + "-op"));
+            } else if (actionName.equals("start")) {
+                commandStart(player);
+            } else if (actionName.equals("stop")) {
+                commandStop(player);
             } else {
-                player.sendMessage(stringUtil.getErrorPrefix() + (ChatColor.WHITE + "J'ai pas encore fait la sous-commande ") + (ChatColor.AQUA + actionName) + (ChatColor.WHITE + ", donc faut attendre."));
+                player.sendMessage(languageUtil.getErrorPrefix() + (ChatColor.WHITE + "J'ai pas encore fait la sous-commande ") + (ChatColor.AQUA + actionName) + (ChatColor.WHITE + ", donc faut attendre."));
             }
         }
     }

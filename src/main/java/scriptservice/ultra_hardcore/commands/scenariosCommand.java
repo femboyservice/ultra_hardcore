@@ -21,7 +21,7 @@ import scriptservice.ultra_hardcore.classes.initManager;
 import scriptservice.ultra_hardcore.classes.scenarioManager;
 import scriptservice.ultra_hardcore.uhc;
 import scriptservice.ultra_hardcore.utils.playerUtil;
-import scriptservice.ultra_hardcore.utils.stringUtil;
+import scriptservice.ultra_hardcore.utils.languageUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,14 +38,14 @@ public class scenariosCommand extends initManager implements CommandExecutor, Ta
     }
 
     // init
-    private static stringUtil stringUtil;
+    private static languageUtil languageUtil;
     private static playerUtil playerUtil;
     @Getter private static Inventory scenarioInventory;
     private static final Map<Integer, scenarioManager> scenarioMapper = new HashMap<>();
 
     @Override
     public void init(PluginManager pluginManager) {
-        stringUtil = plugin.stringUtil;
+        languageUtil = plugin.languageUtil;
         playerUtil = plugin.playerUtil;
 
         //--// init inventory
@@ -83,7 +83,7 @@ public class scenariosCommand extends initManager implements CommandExecutor, Ta
                     actionName = "list";
                     //
                 } else {
-                    player.sendMessage(stringUtil.gets("general-command-infindable", new Object[]{subCommand}));
+                    player.sendMessage(languageUtil.gets("general-command-infindable", new Object[]{subCommand}));
                     return true;
                     // introuvable
                 }
@@ -95,14 +95,14 @@ public class scenariosCommand extends initManager implements CommandExecutor, Ta
                 if (subCommand.equalsIgnoreCase("help")) {
                     actionName = "help";
                 } else {
-                    player.sendMessage(stringUtil.gets("general-command-infindable", new Object[]{subCommand}));
+                    player.sendMessage(languageUtil.gets("general-command-infindable", new Object[]{subCommand}));
                     return true;
                     // introuvable
                 }
 
             } else {
                 // euh, trop d'args
-                player.sendMessage(stringUtil.gets("general-command-too-many-args", new Object[]{2, argsAmount}));
+                player.sendMessage(languageUtil.gets("general-command-too-many-args", new Object[]{2, argsAmount}));
                 return true;
             }
 
@@ -114,11 +114,11 @@ public class scenariosCommand extends initManager implements CommandExecutor, Ta
     }
 
     // tab completer
-    private static final ArrayList<String> mainCommands = new ArrayList<>(); {
+    private final ArrayList<String> mainCommands = new ArrayList<>(); {
         mainCommands.add("help");
     }
 
-    public ArrayList<String> secondCommands = new ArrayList<>(); {
+    private final  ArrayList<String> secondCommands = new ArrayList<>(); {
         secondCommands.add("quiver");
         secondCommands.add("stonevariants");
         secondCommands.add("cutclean");
@@ -164,7 +164,7 @@ public class scenariosCommand extends initManager implements CommandExecutor, Ta
             scenario.setEnabled(!scenario.isEnabled());
             commandUtil.updateInventory();
 
-            playerUtil.sendMessageToAll(stringUtil.gets("scenarios-" + (scenario.isEnabled() ? "enabled" : "disabled"), new Object[]{scenario.getName()}));
+            playerUtil.sendMessageToAll(languageUtil.gets("scenarios-" + (scenario.isEnabled() ? "enabled" : "disabled"), new Object[]{scenario.getName()}));
         } else {
             player.sendMessage("No scenario exists for slot " + event.getRawSlot());
         }
@@ -204,7 +204,7 @@ public class scenariosCommand extends initManager implements CommandExecutor, Ta
             if (actionName.equals("help")) {
                 // no arg => main command
                 if (arg == null) {
-                    player.sendMessage(stringUtil.getm("scenarios-command-help"));
+                    player.sendMessage(languageUtil.getm("scenarios-command-help"));
                     return;
                 }
 
@@ -220,13 +220,13 @@ public class scenariosCommand extends initManager implements CommandExecutor, Ta
                 if (description != null) {
                     player.sendMessage(description);
                 } else {
-                    player.sendMessage(stringUtil.gets("scenarios-command-scenario-null", new Object[]{arg}));
+                    player.sendMessage(languageUtil.gets("scenarios-command-scenario-null", new Object[]{arg}));
                 }
             } else if (actionName.equals("null")) {
                 updateInventory();
                 player.openInventory(getScenarioInventory());
             } else {
-                player.sendMessage(stringUtil.getErrorPrefix() + (ChatColor.WHITE + "J'ai pas encore fait la sous-commande ") + (ChatColor.AQUA + actionName) + (ChatColor.WHITE + ", donc faut attendre."));
+                player.sendMessage(languageUtil.getErrorPrefix() + (ChatColor.WHITE + "J'ai pas encore fait la sous-commande ") + (ChatColor.AQUA + actionName) + (ChatColor.WHITE + ", donc faut attendre."));
             }
         }
     }

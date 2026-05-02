@@ -27,13 +27,13 @@ public class quiver extends scenarioManager implements Listener {
 
     // init
     private playerUtil playerUtil;
-    private stringUtil stringUtil;
+    private languageUtil languageUtil;
     private convertionUtil convertionUtil;
 
     @Override
     public void init(PluginManager pluginManager) {
         playerUtil = plugin.playerUtil;
-        stringUtil = plugin.stringUtil;
+        languageUtil = plugin.languageUtil;
         convertionUtil = plugin.convertionUtil;
 
         pluginManager.registerEvents(this, plugin); // register event
@@ -46,7 +46,7 @@ public class quiver extends scenarioManager implements Listener {
         };
 
         fullDescription = new String[]{
-                plugin.stringUtil.getInfoPrefix() +
+                plugin.languageUtil.getInfoPrefix() +
                         (ChatColor.GRAY + "Arrows ") +
                         (ChatColor.WHITE + "have a limit set at ") +
                         (ChatColor.AQUA + "" + plugin.getGameConfig().getMaxArrows()) +
@@ -97,20 +97,20 @@ public class quiver extends scenarioManager implements Listener {
             // has arrow in inv
             if (currentArrowAmount != 0) {
                 event.setCancelled(true);
-                sendCooldownMessage(player, stringUtil.gets("quiver-pickup-feather-blocked"), featherMessageCooldown);
+                sendCooldownMessage(player, languageUtil.gets("quiver-pickup-feather-blocked"), featherMessageCooldown);
             }
         } else if (itemStack.getType() == Material.ARROW) {
             // has feather in inv
             if (playerUtil.countMaterial(player, Material.FEATHER) != 0) {
                 event.setCancelled(true);
-                sendCooldownMessage(player, stringUtil.gets("quiver-pickup-arrow-blocked"), arrowMessageCooldown);
+                sendCooldownMessage(player, languageUtil.gets("quiver-pickup-arrow-blocked"), arrowMessageCooldown);
                 return;
             }
 
             // already at max
             if (currentArrowAmount >= plugin.getGameConfig().getMaxArrows()) {
                 event.setCancelled(true);
-                sendCooldownMessage(player, (stringUtil.gets("quiver-arrow-blocked", new Object[]{plugin.getGameConfig().getMaxArrows()})), arrowMessageCooldown);
+                sendCooldownMessage(player, (languageUtil.gets("quiver-arrow-blocked", new Object[]{plugin.getGameConfig().getMaxArrows()})), arrowMessageCooldown);
                 return;
             }
 
@@ -129,7 +129,7 @@ public class quiver extends scenarioManager implements Listener {
                 event.setCancelled(true);
 
                 // message
-                sendCooldownMessage(player, (stringUtil.gets("quiver-arrow-limit-reached", new Object[]{plugin.getGameConfig().getMaxArrows()})), arrowMessageCooldown);
+                sendCooldownMessage(player, (languageUtil.gets("quiver-arrow-limit-reached", new Object[]{plugin.getGameConfig().getMaxArrows()})), arrowMessageCooldown);
             }
         }
     }
@@ -169,7 +169,7 @@ public class quiver extends scenarioManager implements Listener {
             // no more arrows allowed (at max ?)
             if (maximumAllowed <= 0) {
                 event.setCancelled(true);
-                sendCooldownMessage(player, (stringUtil.gets("quiver-arrow-blocked", new Object[]{plugin.getGameConfig().getMaxArrows()})), arrowMessageCooldown);
+                sendCooldownMessage(player, (languageUtil.gets("quiver-arrow-blocked", new Object[]{plugin.getGameConfig().getMaxArrows()})), arrowMessageCooldown);
                 return;
             }
 
@@ -192,7 +192,7 @@ public class quiver extends scenarioManager implements Listener {
             player.getWorld().dropItemNaturally(player.getLocation().add(0.0, 0.5, 0.0), cursorItem);
 
             // message
-            stringUtil.sendS(player, "quiver-arrow-limit-reached", new Object[]{plugin.getGameConfig().getMaxArrows()});
+            languageUtil.sendS(player, "quiver-arrow-limit-reached", new Object[]{plugin.getGameConfig().getMaxArrows()});
         }
     }
 
@@ -215,13 +215,13 @@ public class quiver extends scenarioManager implements Listener {
         // max arrows
         if (currentArrowAmount >= plugin.getGameConfig().getMaxArrows()) {
             event.setCancelled(true);
-            sendCooldownMessage(player, (stringUtil.gets("quiver-arrow-blocked", new Object[]{plugin.getGameConfig().getMaxArrows()})), arrowMessageCooldown);
+            sendCooldownMessage(player, (languageUtil.gets("quiver-arrow-blocked", new Object[]{plugin.getGameConfig().getMaxArrows()})), arrowMessageCooldown);
         }
 
         // shiftclick
         if (event.isShiftClick()) {
             event.setCancelled(true);
-            stringUtil.sendS(player, "quiver-shift-click");
+            languageUtil.sendS(player, "quiver-shift-click");
             return;
         }
 
@@ -231,7 +231,7 @@ public class quiver extends scenarioManager implements Listener {
         if (currentArrowAmount + cursorArrowAmount > plugin.getGameConfig().getMaxArrows()) {
             // inventory + crafted
             event.setCancelled(true);
-            stringUtil.sendS(player, "quiver-arrow-limit-reached", new Object[]{plugin.getGameConfig().getMaxArrows()});
+            languageUtil.sendS(player, "quiver-arrow-limit-reached", new Object[]{plugin.getGameConfig().getMaxArrows()});
         }
     }
 }

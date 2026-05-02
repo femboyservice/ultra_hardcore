@@ -7,8 +7,8 @@ import org.bukkit.plugin.PluginManager;
 import scriptservice.ultra_hardcore.classes.initManager;
 import scriptservice.ultra_hardcore.uhc;
 
-public class stringUtil extends initManager {
-    public stringUtil(uhc plugin) {
+public class languageUtil extends initManager {
+    public languageUtil(uhc plugin) {
         super(plugin);
     }
 
@@ -25,6 +25,14 @@ public class stringUtil extends initManager {
     public final String[] getm(String codename, Object[] objects) {
         // return new String[]{};
         switch (codename) {
+            case "no-perms":
+            case "noperms":
+            case "nopermission":
+            case "no-permission":
+                return new String[]{
+                        gets("no-permission")
+                };
+
             case "uhc-command-help-op":
                 return new String[]{
                         getInfoPrefix() + (ChatColor.WHITE + "Toutes les commandes disponibles de ") + (ChatColor.DARK_AQUA + "/") + (ChatColor.AQUA + "uhc") + (ChatColor.DARK_AQUA + " ..."),
@@ -61,6 +69,12 @@ public class stringUtil extends initManager {
 
     public final String gets(String codename, Object[] objects) {
         switch (codename) {
+            case "no-perms":
+            case "noperms":
+            case "nopermission":
+            case "no-permission":
+                return getErrorPrefix() + (ChatColor.RED+"Vous n'avez pas la permission d'utiliser cette commande.");
+
             case "player-kicked-not-using-lunar":
                 return " " + resetEscape +
                         (ChatColor.DARK_GRAY + "«") + getInfoPrefix() + (ChatColor.DARK_GRAY + "»") + resetEscape +
@@ -123,6 +137,21 @@ public class stringUtil extends initManager {
             case "player-leave":
                 if (objects.length != 1) {return (codename+"-not-enough-args");}
                 return (ChatColor.DARK_GRAY + "» ") + (ChatColor.GOLD + "" + ChatColor.BOLD + objects[0].toString()) + (ChatColor.YELLOW + " a quitté la partie."); // [ROUGE-«] Darkness6115 (ROUGE-27/ROUGE-30)
+
+
+            case "uhc-command-start-already":
+                return getErrorPrefix() + (ChatColor.RED + "La partie a déjà commencé");
+            case "uhc-command-stop-nothing":
+                return getErrorPrefix() + (ChatColor.RED + "La partie n'a pas encore commencé");
+            case "uhc-command-stop":
+                return getInfoPrefix() + ("Annulation du lancement de la partie.");
+            case "uhc-command-start-teleport": // utilisation de "§" car c'est dans l'action bar
+                return "§f" + "Téléportation des joueurs.";
+            case "uhc-command-start-timer": // utilisation de "§" car c'est dans l'action bar
+                if (objects.length != 1) {return (codename+"-not-enough-args");}
+                return "§f" + "Démarrage de la partie dans " +
+                        "§3" + objects[0].toString() + "s" +
+                        "§f" + ".";
 
 
 

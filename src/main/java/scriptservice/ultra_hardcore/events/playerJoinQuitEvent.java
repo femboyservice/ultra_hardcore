@@ -12,7 +12,7 @@ import scriptservice.ultra_hardcore.uhc;
 import scriptservice.ultra_hardcore.utils.apolloUtil;
 import scriptservice.ultra_hardcore.utils.convertionUtil;
 import scriptservice.ultra_hardcore.utils.playerUtil;
-import scriptservice.ultra_hardcore.utils.stringUtil;
+import scriptservice.ultra_hardcore.utils.languageUtil;
 
 /**
  * event usage: Global
@@ -24,7 +24,7 @@ public class playerJoinQuitEvent extends initManager implements Listener {
     }
 
     // init
-    private stringUtil stringUtil;
+    private languageUtil languageUtil;
     private apolloUtil apolloUtil;
     private playerUtil playerUtil;
     private convertionUtil convertionUtil;
@@ -32,7 +32,7 @@ public class playerJoinQuitEvent extends initManager implements Listener {
 
     @Override
     public void init(PluginManager pluginManager) {
-        stringUtil = plugin.stringUtil;
+        languageUtil = plugin.languageUtil;
         apolloUtil = plugin.apolloUtil;
         playerUtil = plugin.playerUtil;
         convertionUtil = plugin.convertionUtil;
@@ -44,7 +44,7 @@ public class playerJoinQuitEvent extends initManager implements Listener {
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        final String joinMessage = stringUtil.gets("player-join", new Object[]{player.getName()});
+        final String joinMessage = languageUtil.gets("player-join", new Object[]{player.getName()});
 
         if (lunarclientExclusif) {
             event.setJoinMessage(null); // bon, bah nique sa race, faut sendMessageToAll a cause de lunar qui est pourrav'
@@ -56,7 +56,7 @@ public class playerJoinQuitEvent extends initManager implements Listener {
                     if (!player.isOnline()) {return;} // et ouais, si il deco faut pas en vrai de vrai
 
                     if (lunarclientExclusif && !apolloUtil.isUsingLunarClient(player)) {
-                        player.kickPlayer(stringUtil.gets("player-kicked-not-using-lunar"));
+                        player.kickPlayer(languageUtil.gets("player-kicked-not-using-lunar"));
                         return;
                     }
 
@@ -72,6 +72,6 @@ public class playerJoinQuitEvent extends initManager implements Listener {
     @EventHandler
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
         final Player player = event.getPlayer();
-        event.setQuitMessage(stringUtil.gets("player-leave", new Object[]{player.getName()}));
+        event.setQuitMessage(languageUtil.gets("player-leave", new Object[]{player.getName()}));
     }
 }

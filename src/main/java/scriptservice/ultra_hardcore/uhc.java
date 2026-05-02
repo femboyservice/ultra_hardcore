@@ -11,8 +11,6 @@ import scriptservice.ultra_hardcore.events.*;
 import scriptservice.ultra_hardcore.scenarios.*;
 import scriptservice.ultra_hardcore.utils.*;
 
-import java.util.ArrayList;
-
 public final class uhc extends JavaPlugin {
     //--// definition
     // juste pour faire chier qqn

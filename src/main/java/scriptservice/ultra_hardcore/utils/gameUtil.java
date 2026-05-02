@@ -1,14 +1,9 @@
 package scriptservice.ultra_hardcore.utils;
 
-import org.bukkit.Sound;
 import org.bukkit.plugin.PluginManager;
 import scriptservice.ultra_hardcore.classes.initManager;
 import scriptservice.ultra_hardcore.classes.states;
 import scriptservice.ultra_hardcore.uhc;
-
-import java.util.Calendar;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class gameUtil extends initManager {
     public gameUtil(uhc plugin) {

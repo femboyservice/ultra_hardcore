@@ -20,8 +20,8 @@ import org.bukkit.util.StringUtil;
 import scriptservice.ultra_hardcore.classes.initManager;
 import scriptservice.ultra_hardcore.classes.scenarioManager;
 import scriptservice.ultra_hardcore.uhc;
-import scriptservice.ultra_hardcore.utils.playerUtil;
 import scriptservice.ultra_hardcore.utils.languageUtil;
+import scriptservice.ultra_hardcore.utils.playerUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,16 +38,11 @@ public class scenariosCommand extends initManager implements CommandExecutor, Ta
     }
 
     // init
-    private static languageUtil languageUtil;
-    private static playerUtil playerUtil;
     @Getter private static Inventory scenarioInventory;
     private static final Map<Integer, scenarioManager> scenarioMapper = new HashMap<>();
 
     @Override
     public void init(PluginManager pluginManager) {
-        languageUtil = plugin.languageUtil;
-        playerUtil = plugin.playerUtil;
-
         //--// init inventory
         scenarioInventory = Bukkit.createInventory(null, 36, (ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "Scénarios"));
 
@@ -83,7 +78,7 @@ public class scenariosCommand extends initManager implements CommandExecutor, Ta
                     actionName = "list";
                     //
                 } else {
-                    player.sendMessage(languageUtil.gets("general-command-infindable", new Object[]{subCommand}));
+                    player.sendMessage(languageUtil.gets("general-command-introuvable", new Object[]{subCommand}));
                     return true;
                     // introuvable
                 }
@@ -95,7 +90,7 @@ public class scenariosCommand extends initManager implements CommandExecutor, Ta
                 if (subCommand.equalsIgnoreCase("help")) {
                     actionName = "help";
                 } else {
-                    player.sendMessage(languageUtil.gets("general-command-infindable", new Object[]{subCommand}));
+                    player.sendMessage(languageUtil.gets("general-command-introuvable", new Object[]{subCommand}));
                     return true;
                     // introuvable
                 }

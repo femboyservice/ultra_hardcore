@@ -31,11 +31,8 @@ public class enchantmentLimiter extends initManager implements Listener {
     }
 
     // init
-    private languageUtil languageUtil;
-
     @Override
     public void init(PluginManager pluginManager) {
-        languageUtil = plugin.languageUtil;
         pluginManager.registerEvents(this, plugin); // register event
     }
 

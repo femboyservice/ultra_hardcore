@@ -22,10 +22,7 @@ public final class uhc extends JavaPlugin {
 
     // utils
     public apolloUtil apolloUtil;
-    public convertionUtil convertionUtil;
     public gameUtil gameUtil;
-    public languageUtil languageUtil;
-    public playerUtil playerUtil;
     public timerUtil timerUtil;
 
     public scenarioManager[] scenarioManagers;
@@ -44,10 +41,7 @@ public final class uhc extends JavaPlugin {
         final projectileLimiter projectileLimiter = new projectileLimiter(plugin);
         // utils
         apolloUtil = new apolloUtil(plugin);
-        convertionUtil = new convertionUtil(plugin);
         gameUtil = new gameUtil(plugin);
-        languageUtil = new languageUtil(plugin);
-        playerUtil = new playerUtil(plugin);
         timerUtil = new timerUtil(plugin);
         // commands
         final uhcCommand uhcCommand = new uhcCommand(plugin);
@@ -56,18 +50,19 @@ public final class uhc extends JavaPlugin {
         final stoneVariant scenario_stoneVariant = new stoneVariant(plugin);
         final quiver scenario_quiver = new quiver(plugin);
         final cutClean scenario_cutClean = new cutClean(plugin);
+        final rodless scenario_rodless = new rodless(plugin);
         //--// init
         // utils
         for (initManager util: new initManager[]{
                 playerJoinQuitEvent, damagePatcher, bucketLimiter, projectileLimiter, enchantmentLimiter, // events
-                languageUtil, apolloUtil, playerUtil, convertionUtil, timerUtil, gameUtil, // utils
+                apolloUtil, timerUtil, gameUtil, // utils
                 uhcCommand, scenariosCommand, // commands
         }) {
             util.init(pluginManager);
         }
 
         // scenarios
-        scenarioManagers = new scenarioManager[]{scenario_cutClean, scenario_stoneVariant, scenario_quiver};
+        scenarioManagers = new scenarioManager[]{scenario_cutClean, scenario_stoneVariant, scenario_quiver, scenario_rodless};
         for (scenarioManager scenario: scenarioManagers) {
             scenario.init(pluginManager);
         }

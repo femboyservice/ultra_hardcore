@@ -12,6 +12,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.Vector;
 import scriptservice.ultra_hardcore.classes.scenarioManager;
 import scriptservice.ultra_hardcore.uhc;
+import scriptservice.ultra_hardcore.utils.languageUtil;
 
 import java.util.*;
 
@@ -38,7 +39,7 @@ public class cutClean extends scenarioManager implements Listener {
         };
 
         fullDescription = new String[]{
-                plugin.languageUtil.getInfoPrefix() + (ChatColor.YELLOW+"Ores") +
+                languageUtil.getInfoPrefix() + (ChatColor.YELLOW+"Ores") +
                         (ChatColor.WHITE+" and ") +
                         (ChatColor.GOLD+"Foods") +
                         (ChatColor.WHITE+" are cooked when dropped, this includes:"),

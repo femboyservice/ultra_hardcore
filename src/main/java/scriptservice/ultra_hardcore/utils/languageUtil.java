@@ -13,16 +13,16 @@ public class languageUtil extends initManager {
     }
 
     // globals
-    private final String resetEscape = (ChatColor.RESET + "\n");
-    @Getter private final String infoPrefix = ((ChatColor.DARK_GRAY + "{") + (ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "ultra_hardcore") + (ChatColor.DARK_GRAY + "} ")) + ChatColor.RESET;
-    @Getter private final String errorPrefix = ((ChatColor.DARK_GRAY + "{") + (ChatColor.RED + "" + ChatColor.BOLD + "ultra_hardcore") + (ChatColor.DARK_GRAY + "} ")) + ChatColor.RESET;
+    private static String resetEscape = (ChatColor.RESET + "\n");
+    @Getter private static String infoPrefix = ((ChatColor.DARK_GRAY + "{") + (ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "ultra_hardcore") + (ChatColor.DARK_GRAY + "} ")) + ChatColor.RESET;
+    @Getter private static String errorPrefix = ((ChatColor.DARK_GRAY + "{") + (ChatColor.RED + "" + ChatColor.BOLD + "ultra_hardcore") + (ChatColor.DARK_GRAY + "} ")) + ChatColor.RESET;
 
     // init
     @Override
     public void init(PluginManager pluginManager) {}
 
     // per-class methods
-    public final String[] getm(String codename, Object[] objects) {
+    public static String[] getm(String codename, Object[] objects) {
         // return new String[]{};
         switch (codename) {
             case "no-perms":
@@ -63,11 +63,11 @@ public class languageUtil extends initManager {
         return new String[]{codename + "-not-found"};
     }
 
-    public final String[] getm(String codename) {
+    public static String[] getm(String codename) {
         return getm(codename, null);
     }
 
-    public final String gets(String codename, Object[] objects) {
+    public static String gets(String codename, Object[] objects) {
         switch (codename) {
             case "no-perms":
             case "noperms":
@@ -87,7 +87,7 @@ public class languageUtil extends initManager {
             case "general-command-too-many-args":
                 if (objects.length != 2) {return (codename+"-not-enough-args");}
                 return (getErrorPrefix() + "Trop d'arguments donné dans la commande.") + ((ChatColor.DARK_GRAY + " (max: ") + (ChatColor.DARK_AQUA + objects[0].toString()) + (ChatColor.DARK_GRAY + ", given: ") + (ChatColor.DARK_AQUA + objects[1].toString()) + (ChatColor.DARK_GRAY + ")"));
-            case "general-command-infindable":
+            case "general-command-introuvable":
                 if (objects.length != 1) {return (codename+"-not-enough-args");}
                 return getErrorPrefix() + (ChatColor.WHITE + "Sous-commande ") + (ChatColor.AQUA + objects[0].toString()) + (ChatColor.WHITE + " introuvable ..?");
 
@@ -159,6 +159,12 @@ public class languageUtil extends initManager {
                 return getErrorPrefix() + (ChatColor.RED + "Vous ne pouvez pas interagir avec ce bloc.");
             case "cannot-interact-item":
                 return getErrorPrefix() + (ChatColor.RED + "Vous ne pouvez pas interagir avec cette item.");
+            case "cannot-pickup-item":
+                return getErrorPrefix() + (ChatColor.RED + "Vous ne pouvez pas ramasser cette item.");
+            case "cannot-craft-item":
+                return getErrorPrefix() + (ChatColor.RED + "Vous ne pouvez pas crafter cette item.");
+            case "cannot-use-item":
+                return getErrorPrefix() + (ChatColor.RED + "Vous ne pouvez pas utiliser cette item.");
 
 
 
@@ -174,32 +180,51 @@ public class languageUtil extends initManager {
                 if (objects.length != 1) {return (codename+"-not-enough-args");}
             return getInfoPrefix() + (ChatColor.WHITE + "Le scénario ") + (ChatColor.AQUA + "" + ChatColor.BOLD + objects[0].toString()) + (ChatColor.WHITE + " a été ") + (ChatColor.GREEN + "activé") + (ChatColor.WHITE + ".");
 
+
+
+            case "uhc-cycle-day":
+                return (
+                        (ChatColor.GOLD+"☀"+ChatColor.YELLOW+" LE JOUR SE LEVE "+ChatColor.GOLD+"☀")
+                );
+            case "uhc-cycle-night":
+                return (
+                        (ChatColor.DARK_BLUE+"☾"+ChatColor.BLUE+" LA NUIT TOMBE "+ChatColor.DARK_BLUE+"☽")
+                );
+
+            case "uhc-chat-enabled":
+                return (ChatColor.GREEN+"Le chat est activé.");
+            case "uhc-chat-disabled":
+                return (ChatColor.RED+"Le chat est desactivé.");
+            case "uhc-chat-now-enabled":
+                return (ChatColor.GREEN+"Le chat est de nouveau activé.");
+            case "uhc-chat-now-disabled":
+                return (ChatColor.RED+"Le chat a été desactivé.");
         }
 
         return (codename + "-not-found");
     }
 
-    public final String gets(String codename) {
+    public static String gets(String codename) {
         return gets(codename, null);
     }
 
     // null player safe-method
-    public final void sendS(Player player, String codename, Object[] objects) {
+    public static void sendS(Player player, String codename, Object[] objects) {
         if (player == null) {return;}
         player.sendMessage(gets(codename, objects));
     }
 
-    public final void sendS(Player player, String codename) {
+    public static void sendS(Player player, String codename) {
         if (player == null) {return;}
         player.sendMessage(gets(codename, null));
     }
 
-    public final void sendM(Player player, String codename, Object[] objects) {
+    public static void sendM(Player player, String codename, Object[] objects) {
         if (player == null) {return;}
         player.sendMessage(getm(codename, objects));
     }
 
-    public final void sendM(Player player, String codename) {
+    public static void sendM(Player player, String codename) {
         if (player == null) {return;}
         player.sendMessage(getm(codename, null));
     }

@@ -17,6 +17,7 @@ public class gameConfig {
     @Getter private final Material strengthMaterial = Material.RED_ROSE;
     @Getter private final Material critMaterial = Material.GOLD_SWORD;
 
+    // TODO :: CHANGE THIS TO PER-PLAYER !!
     // items related
     @Getter @Setter private boolean pearlEnabled = false;
     @Getter @Setter private boolean lavaEnabled = false;
@@ -41,4 +42,10 @@ public class gameConfig {
 
     // game related
     @Getter @Setter private states gameState = states.WAIT;
+    @Getter @Setter private states chatState = states.CHAT_ENABLED;
+
+    @Getter @Setter private int gameEpisode = 0;
+    @Getter @Setter private int gameGroups = 1;
+
+    @Getter @Setter boolean cycle = false; // true = Jour, false = Nuit
 }

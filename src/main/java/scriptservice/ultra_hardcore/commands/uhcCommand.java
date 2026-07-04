@@ -26,12 +26,10 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
     }
 
     // init
-    private static languageUtil languageUtil;
     private static gameUtil gameUtil;
 
     @Override
     public void init(PluginManager pluginManager) {
-        languageUtil = plugin.languageUtil;
         gameUtil = plugin.gameUtil;
 
         plugin.getCommand("uhc").setExecutor(this);
@@ -48,7 +46,7 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
             String arg = null;
 
             if (argsAmount == 0) {
-                actionName = "null";
+                actionName = "help";
                 // donnes des informations sur l'uhc (% d'effet, limite de stuff, etc.)
             } else if (argsAmount == 1) {
                 final String subCommand = strings[0];
@@ -65,7 +63,7 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
                     actionName = "settings";
                     // ouvre un inventaire avec tous les settings changeable de l'uhc
                 } else {
-                    player.sendMessage(languageUtil.gets("general-command-infindable", new Object[]{subCommand}));
+                    player.sendMessage(languageUtil.gets("general-command-introuvable", new Object[]{subCommand}));
                     return true;
                     // introuvable
                 }
@@ -77,7 +75,7 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
                 if (subCommand.equalsIgnoreCase("help")) {
                     actionName = "help";
                 } else {
-                    player.sendMessage(languageUtil.gets("general-command-infindable", new Object[]{subCommand}));
+                    player.sendMessage(languageUtil.gets("general-command-introuvable", new Object[]{subCommand}));
                     return true;
                     // introuvable
                 }
@@ -123,7 +121,7 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
     }
 
     public static class commandUtil {
-        public static void commandStart(Player player) {
+        private static void commandStart(Player player) {
             if (player == null) {return;}
 
             // not op
@@ -139,11 +137,14 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
                 return;
             }
 
+            // set main world
+            gameUtil.setWorldName(player.getWorld().getName());
+
             // launch
             gameUtil.startSTART();
         }
 
-        public static void commandStop(Player player) {
+        private static void commandStop(Player player) {
             if (player == null) {return;}
 
             // not op
@@ -173,9 +174,13 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
 
                 case PREGAME:
                     // clear player inventories, effects, extra health, remove scoreboard
-
+                    gameUtil.stopPREGAME();
+                    return;
                 case GAME:
-                    // same as pregame ??
+                    // PREGAME + destroy joueur class
+                    gameUtil.stopGAME();
+
+                    return;
 
                 case END:
                     player.sendMessage(ChatColor.RED + "pas fait");

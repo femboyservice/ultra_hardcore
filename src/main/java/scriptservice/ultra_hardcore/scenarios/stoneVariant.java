@@ -11,6 +11,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.plugin.PluginManager;
 import scriptservice.ultra_hardcore.classes.scenarioManager;
 import scriptservice.ultra_hardcore.uhc;
+import scriptservice.ultra_hardcore.utils.languageUtil;
 
 /**
  * scenario usage: Stone Variant
@@ -33,7 +34,7 @@ public class stoneVariant extends scenarioManager implements Listener {
         };
 
         fullDescription = new String[]{
-                plugin.languageUtil.getInfoPrefix() + (ChatColor.GRAY+"Andesite") +
+                languageUtil.getInfoPrefix() + (ChatColor.GRAY+"Andesite") +
                         (ChatColor.WHITE+", ") +
                         (ChatColor.GRAY+"Granite") +
                         (ChatColor.WHITE+" and ") +

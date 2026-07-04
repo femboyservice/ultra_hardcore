@@ -14,31 +14,46 @@ public class convertionUtil extends initManager {
     public void init(PluginManager pluginManager) {}
 
     // per-class methods
-    public double millisecondToTick(double millisecond) {
+    public static double millisecondToTick(double millisecond) {
         return secondToTick(millisecond / 1_000);
     }
 
-    public double secondToTick(double second) {
+    public static double secondToTick(double second) {
         return (second * 20);
     }
-    public long secondToTick(int second) {
+
+    public static long secondToTick(int second) {
         return (second * 20L);
     }
 
-    public double minuteToTick(double minute) {
+    public static double minuteToTick(double minute) {
         return secondToTick(minute * 60);
     }
 
-    public double secondToMillisecond(double second) {
+    public static double secondToMillisecond(double second) {
         return (second * 1_000);
     }
 
-    public double millisecondToSecond(double millisecond) {
+    public static double millisecondToSecond(double millisecond) {
         return (millisecond / 1_000);
     }
 
-    public double minuteToMillisecond(double minute) {
+    public static double minuteToMillisecond(double minute) {
         return secondToMillisecond(minute * 60);
     }
 
+    public static String IntegerToTime(int time) {
+        // oui, c'est terriblement pas opti, mais j'en suis très fier
+
+        final int hrsInt = (time / 3600);
+        final int mnsInt = ((time / 60) - (hrsInt * 60));
+        final int secInt = (time % 60);
+
+        final String sec = String.valueOf(String.valueOf(secInt).length() == 1 ? "0" + secInt : secInt);
+        final String mns = String.valueOf(String.valueOf(mnsInt).length() == 1 ? "0" + mnsInt : mnsInt);
+
+        return (
+                (hrsInt) == 0 ? ((mnsInt) == 0 ? (secInt) + "s" : (mnsInt) + "m" + (sec) + "s") : (hrsInt) + "h" + (mns) + "m" + (sec) + "s"
+        );
+    }
 }

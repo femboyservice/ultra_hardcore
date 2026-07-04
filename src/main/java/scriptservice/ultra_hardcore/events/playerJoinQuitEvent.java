@@ -7,12 +7,13 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
+import scriptservice.ultra_hardcore.classes.activePlayer;
 import scriptservice.ultra_hardcore.classes.initManager;
+import scriptservice.ultra_hardcore.classes.scoreboardSign;
 import scriptservice.ultra_hardcore.uhc;
-import scriptservice.ultra_hardcore.utils.apolloUtil;
-import scriptservice.ultra_hardcore.utils.convertionUtil;
-import scriptservice.ultra_hardcore.utils.playerUtil;
-import scriptservice.ultra_hardcore.utils.languageUtil;
+import scriptservice.ultra_hardcore.utils.*;
+
+import java.util.Optional;
 
 /**
  * event usage: Global
@@ -24,18 +25,14 @@ public class playerJoinQuitEvent extends initManager implements Listener {
     }
 
     // init
-    private languageUtil languageUtil;
+    private gameUtil gameUtil;
     private apolloUtil apolloUtil;
-    private playerUtil playerUtil;
-    private convertionUtil convertionUtil;
     private boolean lunarclientExclusif;
 
     @Override
     public void init(PluginManager pluginManager) {
-        languageUtil = plugin.languageUtil;
+        gameUtil = plugin.gameUtil;
         apolloUtil = plugin.apolloUtil;
-        playerUtil = plugin.playerUtil;
-        convertionUtil = plugin.convertionUtil;
         lunarclientExclusif = (boolean) plugin.getPluginConfig().get("lunarclientExclusif");
 
         pluginManager.registerEvents(this, plugin); // register event
@@ -53,7 +50,7 @@ public class playerJoinQuitEvent extends initManager implements Listener {
                 @Override
                 public void run() {
                     // actual event start
-                    if (!player.isOnline()) {return;} // et ouais, si il deco faut pas en vrai de vrai
+                    if (!player.isOnline()) {return;} // et ouais, s'il deco faut pas en vrai de vrai
 
                     if (lunarclientExclusif && !apolloUtil.isUsingLunarClient(player)) {
                         player.kickPlayer(languageUtil.gets("player-kicked-not-using-lunar"));
@@ -67,11 +64,30 @@ public class playerJoinQuitEvent extends initManager implements Listener {
         } else {
             event.setJoinMessage(joinMessage);
         }
+
+        // add scoreboard
+        final Optional<activePlayer> optionalActivePlayer = gameUtil.isPlayerActive(player);
+        optionalActivePlayer.ifPresent(activePlayer -> {
+            final scoreboardSign scoreboard = playerUtil.createScoreboard(activePlayer.getUUID());
+            activePlayer.setScoreboard(scoreboard);
+
+            playerUtil.updateGlobalScoreboard(activePlayer.getUUID(), scoreboard);
+        }); // hein? wtf? trop bien // ok j'ai compris en vrai (je crois)
+
     }
 
     @EventHandler
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
         final Player player = event.getPlayer();
         event.setQuitMessage(languageUtil.gets("player-leave", new Object[]{player.getName()}));
+
+        // remove scoreboard from global scoreboard list
+        playerUtil.removeScoreboard(player);
+
+        // remove scoreboard from activePlayer
+        final Optional<activePlayer> optionalActivePlayer = gameUtil.isPlayerActive(player);
+        optionalActivePlayer.ifPresent(activePlayer -> {
+            activePlayer.setScoreboard(null);
+        });
     }
 }

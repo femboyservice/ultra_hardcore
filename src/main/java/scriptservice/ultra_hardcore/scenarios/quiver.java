@@ -26,16 +26,8 @@ public class quiver extends scenarioManager implements Listener {
     }
 
     // init
-    private playerUtil playerUtil;
-    private languageUtil languageUtil;
-    private convertionUtil convertionUtil;
-
     @Override
     public void init(PluginManager pluginManager) {
-        playerUtil = plugin.playerUtil;
-        languageUtil = plugin.languageUtil;
-        convertionUtil = plugin.convertionUtil;
-
         pluginManager.registerEvents(this, plugin); // register event
 
         // define class stuff
@@ -46,7 +38,7 @@ public class quiver extends scenarioManager implements Listener {
         };
 
         fullDescription = new String[]{
-                plugin.languageUtil.getInfoPrefix() +
+                languageUtil.getInfoPrefix() +
                         (ChatColor.GRAY + "Arrows ") +
                         (ChatColor.WHITE + "have a limit set at ") +
                         (ChatColor.AQUA + "" + plugin.getGameConfig().getMaxArrows()) +

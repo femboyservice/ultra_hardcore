@@ -1,11 +1,7 @@
 package scriptservice.ultra_hardcore.utils;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import scriptservice.ultra_hardcore.classes.activePlayer;
 import scriptservice.ultra_hardcore.classes.initManager;

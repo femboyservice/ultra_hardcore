@@ -1,6 +1,5 @@
 package scriptservice.ultra_hardcore.scenarios;
 
-import net.minecraft.server.v1_8_R3.ItemFishingRod;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -9,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -18,7 +16,6 @@ import scriptservice.ultra_hardcore.classes.scenarioManager;
 import scriptservice.ultra_hardcore.uhc;
 import scriptservice.ultra_hardcore.utils.convertionUtil;
 import scriptservice.ultra_hardcore.utils.languageUtil;
-import scriptservice.ultra_hardcore.utils.playerUtil;
 
 import java.util.HashSet;
 import java.util.UUID;

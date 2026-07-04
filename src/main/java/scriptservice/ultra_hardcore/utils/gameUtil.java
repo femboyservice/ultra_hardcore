@@ -2,7 +2,6 @@ package scriptservice.ultra_hardcore.utils;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.World;

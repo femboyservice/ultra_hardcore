@@ -33,16 +33,16 @@ public final class uhc extends JavaPlugin {
         final PluginManager pluginManager = getServer().getPluginManager();
 
         //--// create
+        // utils
+        apolloUtil = new apolloUtil(plugin);
+        gameUtil = new gameUtil(plugin);
+        timerUtil = new timerUtil(plugin);
         // events
         final enchantmentLimiter enchantmentLimiter = new enchantmentLimiter(plugin);
         final damagePatcher damagePatcher = new damagePatcher(plugin);
         final bucketLimiter bucketLimiter = new bucketLimiter(plugin);
         final playerJoinQuitEvent playerJoinQuitEvent = new playerJoinQuitEvent(plugin);
         final projectileLimiter projectileLimiter = new projectileLimiter(plugin);
-        // utils
-        apolloUtil = new apolloUtil(plugin);
-        gameUtil = new gameUtil(plugin);
-        timerUtil = new timerUtil(plugin);
         // commands
         final uhcCommand uhcCommand = new uhcCommand(plugin);
         final scenariosCommand scenariosCommand = new scenariosCommand(plugin);

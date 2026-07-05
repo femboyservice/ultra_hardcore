@@ -10,6 +10,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
+import scriptservice.ultra_hardcore.classes.activePlayer;
 import scriptservice.ultra_hardcore.classes.scenarioManager;
 import scriptservice.ultra_hardcore.uhc;
 import scriptservice.ultra_hardcore.utils.*;
@@ -26,8 +27,10 @@ public class quiver extends scenarioManager implements Listener {
     }
 
     // init
+    private gameUtil gameUtil;
     @Override
     public void init(PluginManager pluginManager) {
+        gameUtil = plugin.gameUtil;
         pluginManager.registerEvents(this, plugin); // register event
 
         // define class stuff
@@ -40,9 +43,7 @@ public class quiver extends scenarioManager implements Listener {
         fullDescription = new String[]{
                 languageUtil.getInfoPrefix() +
                         (ChatColor.GRAY + "Arrows ") +
-                        (ChatColor.WHITE + "have a limit set at ") +
-                        (ChatColor.AQUA + "" + plugin.getGameConfig().getMaxArrows()) +
-                        (ChatColor.WHITE + " per player.")
+                        (ChatColor.WHITE + "have a limit per players.")
 
         };
 
@@ -78,10 +79,14 @@ public class quiver extends scenarioManager implements Listener {
         final ItemStack itemStack = event.getItem().getItemStack();
         if (itemStack == null) {return;}
 
+        // activePlayer check
+        final Optional<activePlayer> optionalActivePlayer = gameUtil.isPlayerActive(event.getPlayer());
+        if (!optionalActivePlayer.isPresent()) {return;}
+
         // consts
+        final activePlayer activePlayer = optionalActivePlayer.get();
         final Player player = event.getPlayer();
         int currentArrowAmount = playerUtil.countMaterial(player, Material.ARROW);
-
 
 
         // block items
@@ -100,16 +105,16 @@ public class quiver extends scenarioManager implements Listener {
             }
 
             // already at max
-            if (currentArrowAmount >= plugin.getGameConfig().getMaxArrows()) {
+            if (currentArrowAmount >= activePlayer.getMaxArrows()) {
                 event.setCancelled(true);
-                sendCooldownMessage(player, (languageUtil.gets("quiver-arrow-blocked", new Object[]{plugin.getGameConfig().getMaxArrows()})), arrowMessageCooldown);
+                sendCooldownMessage(player, (languageUtil.gets("quiver-arrow-blocked", new Object[]{activePlayer.getMaxArrows()})), arrowMessageCooldown);
                 return;
             }
 
             // ground related
             int groundArrowsAmount = itemStack.getAmount();
-            if (currentArrowAmount + groundArrowsAmount > plugin.getGameConfig().getMaxArrows()) {
-                int maximumAllowed = plugin.getGameConfig().getMaxArrows() - currentArrowAmount;
+            if (currentArrowAmount + groundArrowsAmount > activePlayer.getMaxArrows()) {
+                int maximumAllowed = activePlayer.getMaxArrows() - currentArrowAmount;
 
                 // add max arrows
                 player.getInventory().addItem(new ItemStack(Material.ARROW, maximumAllowed));
@@ -121,7 +126,7 @@ public class quiver extends scenarioManager implements Listener {
                 event.setCancelled(true);
 
                 // message
-                sendCooldownMessage(player, (languageUtil.gets("quiver-arrow-limit-reached", new Object[]{plugin.getGameConfig().getMaxArrows()})), arrowMessageCooldown);
+                sendCooldownMessage(player, (languageUtil.gets("quiver-arrow-limit-reached", new Object[]{activePlayer.getMaxArrows()})), arrowMessageCooldown);
             }
         }
     }
@@ -133,7 +138,12 @@ public class quiver extends scenarioManager implements Listener {
         // inventory click not from player
         if (!(event.getWhoClicked() instanceof Player)) {return;}
 
+        // activePlayer check
+        final Optional<activePlayer> optionalActivePlayer = gameUtil.isPlayerActive((Player) event.getWhoClicked());
+        if (!optionalActivePlayer.isPresent()) {return;}
+
         // consts
+        final activePlayer activePlayer = optionalActivePlayer.get();
         final Player player = (Player) event.getWhoClicked();
         ItemStack cursorItem = event.getCursor(); // item in cursor BEFORE click
         ItemStack slotItem = event.getCurrentItem(); // item in clicked slot BEFORE click
@@ -155,13 +165,13 @@ public class quiver extends scenarioManager implements Listener {
         final int totalArrowsWithoutSlot = currentArrowAmount - inSlotArrowAmount;
 
         // if added arrows over limit
-        if (totalArrowsWithoutSlot + inSlotArrowAmount + addingArrowAmount > plugin.getGameConfig().getMaxArrows()) {
-            int maximumAllowed = plugin.getGameConfig().getMaxArrows() - totalArrowsWithoutSlot - inSlotArrowAmount;
+        if (totalArrowsWithoutSlot + inSlotArrowAmount + addingArrowAmount > activePlayer.getMaxArrows()) {
+            int maximumAllowed = activePlayer.getMaxArrows() - totalArrowsWithoutSlot - inSlotArrowAmount;
 
             // no more arrows allowed (at max ?)
             if (maximumAllowed <= 0) {
                 event.setCancelled(true);
-                sendCooldownMessage(player, (languageUtil.gets("quiver-arrow-blocked", new Object[]{plugin.getGameConfig().getMaxArrows()})), arrowMessageCooldown);
+                sendCooldownMessage(player, (languageUtil.gets("quiver-arrow-blocked", new Object[]{activePlayer.getMaxArrows()})), arrowMessageCooldown);
                 return;
             }
 
@@ -184,7 +194,7 @@ public class quiver extends scenarioManager implements Listener {
             player.getWorld().dropItemNaturally(player.getLocation().add(0.0, 0.5, 0.0), cursorItem);
 
             // message
-            languageUtil.sendS(player, "quiver-arrow-limit-reached", new Object[]{plugin.getGameConfig().getMaxArrows()});
+            languageUtil.sendS(player, "quiver-arrow-limit-reached", new Object[]{activePlayer.getMaxArrows()});
         }
     }
 
@@ -198,16 +208,21 @@ public class quiver extends scenarioManager implements Listener {
         // crafted item is not related
         if (event.getRecipe().getResult().getType() != Material.ARROW) {return;}
 
+        // activePlayer check
+        final Optional<activePlayer> optionalActivePlayer = gameUtil.isPlayerActive((Player) event.getWhoClicked());
+        if (!optionalActivePlayer.isPresent()) {return;}
+
         // consts
+        final activePlayer activePlayer = optionalActivePlayer.get();
         final Player player = (Player) event.getWhoClicked();
         final int currentArrowAmount = playerUtil.countMaterial(player, Material.ARROW);
 
 
 
         // max arrows
-        if (currentArrowAmount >= plugin.getGameConfig().getMaxArrows()) {
+        if (currentArrowAmount >= activePlayer.getMaxArrows()) {
             event.setCancelled(true);
-            sendCooldownMessage(player, (languageUtil.gets("quiver-arrow-blocked", new Object[]{plugin.getGameConfig().getMaxArrows()})), arrowMessageCooldown);
+            sendCooldownMessage(player, (languageUtil.gets("quiver-arrow-blocked", new Object[]{activePlayer.getMaxArrows()})), arrowMessageCooldown);
         }
 
         // shiftclick
@@ -220,10 +235,10 @@ public class quiver extends scenarioManager implements Listener {
         // reached limit
         final int craftedArrowAmount = event.getRecipe().getResult().getAmount();
         final int cursorArrowAmount = ((player.getItemOnCursor() != null) ? (player.getItemOnCursor().getAmount() + craftedArrowAmount) : craftedArrowAmount);
-        if (currentArrowAmount + cursorArrowAmount > plugin.getGameConfig().getMaxArrows()) {
+        if (currentArrowAmount + cursorArrowAmount > activePlayer.getMaxArrows()) {
             // inventory + crafted
             event.setCancelled(true);
-            languageUtil.sendS(player, "quiver-arrow-limit-reached", new Object[]{plugin.getGameConfig().getMaxArrows()});
+            languageUtil.sendS(player, "quiver-arrow-limit-reached", new Object[]{activePlayer.getMaxArrows()});
         }
     }
 }

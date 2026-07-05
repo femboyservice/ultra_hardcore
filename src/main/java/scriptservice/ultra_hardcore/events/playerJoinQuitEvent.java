@@ -68,10 +68,10 @@ public class playerJoinQuitEvent extends initManager implements Listener {
         // add scoreboard
         final Optional<activePlayer> optionalActivePlayer = gameUtil.isPlayerActive(player);
         optionalActivePlayer.ifPresent(activePlayer -> {
-            final scoreboardSign scoreboard = playerUtil.createScoreboard(activePlayer.getUUID());
+            final scoreboardSign scoreboard = gameUtil.createScoreboard(activePlayer.getUUID());
             activePlayer.setScoreboard(scoreboard);
 
-            playerUtil.updateGlobalScoreboard(activePlayer.getUUID(), scoreboard);
+            gameUtil.updateGlobalScoreboard(activePlayer.getUUID(), scoreboard);
         }); // hein? wtf? trop bien // ok j'ai compris en vrai (je crois)
 
     }
@@ -82,12 +82,10 @@ public class playerJoinQuitEvent extends initManager implements Listener {
         event.setQuitMessage(languageUtil.gets("player-leave", new Object[]{player.getName()}));
 
         // remove scoreboard from global scoreboard list
-        playerUtil.removeScoreboard(player);
+        gameUtil.removeScoreboard(player);
 
         // remove scoreboard from activePlayer
         final Optional<activePlayer> optionalActivePlayer = gameUtil.isPlayerActive(player);
-        optionalActivePlayer.ifPresent(activePlayer -> {
-            activePlayer.setScoreboard(null);
-        });
+        optionalActivePlayer.ifPresent(activePlayer -> activePlayer.setScoreboard(null));
     }
 }

@@ -10,13 +10,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
+import scriptservice.ultra_hardcore.classes.activePlayer;
 import scriptservice.ultra_hardcore.classes.initManager;
 import scriptservice.ultra_hardcore.uhc;
+import scriptservice.ultra_hardcore.utils.gameUtil;
 import scriptservice.ultra_hardcore.utils.languageUtil;
+
+import java.util.Optional;
 
 /**
  * event usage: Global
- * description: projectile-related event (ender pearl)
+ * description: projectile-related event (pearls)
  */
 public class projectileLimiter extends initManager implements Listener {
     public projectileLimiter(uhc plugin) {
@@ -24,8 +28,10 @@ public class projectileLimiter extends initManager implements Listener {
     }
 
     // init
+    private gameUtil gameUtil;
     @Override
     public void init(PluginManager pluginManager) {
+        gameUtil = plugin.gameUtil;
         pluginManager.registerEvents(this, plugin); // register event
     }
 
@@ -35,9 +41,14 @@ public class projectileLimiter extends initManager implements Listener {
 
         if (projectile instanceof EnderPearl) {
             if (projectile.getShooter() instanceof Player) {
-                if (!plugin.getGameConfig().isPearlEnabled()) {
-                    final Player player = (Player) projectile.getShooter();
+                final Player player = (Player) projectile.getShooter();
 
+                // activePlayer check
+                final Optional<activePlayer> optionalActivePlayer = gameUtil.isPlayerActive(player);
+                if (!optionalActivePlayer.isPresent()) {return;}
+                final activePlayer activePlayer = optionalActivePlayer.get();
+
+                if (!activePlayer.isPearlEnabled()) {
                     // cancel event
                     event.setCancelled(true);
 

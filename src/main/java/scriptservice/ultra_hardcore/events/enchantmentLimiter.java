@@ -13,13 +13,16 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
+import scriptservice.ultra_hardcore.classes.activePlayer;
 import scriptservice.ultra_hardcore.classes.initManager;
 import scriptservice.ultra_hardcore.uhc;
+import scriptservice.ultra_hardcore.utils.gameUtil;
 import scriptservice.ultra_hardcore.utils.languageUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * event usage: Global
@@ -31,8 +34,10 @@ public class enchantmentLimiter extends initManager implements Listener {
     }
 
     // init
+    private gameUtil gameUtil;
     @Override
     public void init(PluginManager pluginManager) {
+        gameUtil = plugin.gameUtil;
         pluginManager.registerEvents(this, plugin); // register event
     }
 
@@ -57,29 +62,29 @@ public class enchantmentLimiter extends initManager implements Listener {
         enchantmentNames.put(Enchantment.ARROW_KNOCKBACK, "Frappe");
     }
 
-    private int getMaxLevel(ItemStack enchantedItem, Enchantment enchantment) {
+    private int getMaxLevel(activePlayer activePlayer, ItemStack enchantedItem, Enchantment enchantment) {
         if (enchantment.equals(Enchantment.ARROW_DAMAGE)) {
-            return plugin.getGameConfig().getPowerMax();
+            return activePlayer.getPowerMax();
         } else if (enchantment.equals(Enchantment.DAMAGE_ALL)) {
             if (enchantedItem.getType() == Material.DIAMOND_SWORD) {
-                return plugin.getGameConfig().getDiamondSharpnessMax();
+                return activePlayer.getDiamondSharpnessMax();
             } else {
-                return plugin.getGameConfig().getOthersSharpnessMax();
+                return activePlayer.getOthersSharpnessMax();
             }
         } else if (enchantment.equals(Enchantment.PROTECTION_ENVIRONMENTAL)) {
             if (enchantedItem.getType() == Material.DIAMOND_HELMET || enchantedItem.getType() == Material.DIAMOND_CHESTPLATE || enchantedItem.getType() == Material.DIAMOND_LEGGINGS || enchantedItem.getType() == Material.DIAMOND_BOOTS) {
-                return plugin.getGameConfig().getDiamondProtectionMax();
+                return activePlayer.getDiamondProtectionMax();
             } else {
-                return plugin.getGameConfig().getOthersProtectionMax();
+                return activePlayer.getOthersProtectionMax();
             }
         } else if (enchantment.equals(Enchantment.FIRE_ASPECT)) {
-            return plugin.getGameConfig().getFireAspectMax();
+            return activePlayer.getFireAspectMax();
         } else if (enchantment.equals(Enchantment.ARROW_FIRE)) {
-            return plugin.getGameConfig().getFlameMax();
+            return activePlayer.getFlameMax();
         } else if (enchantment.equals(Enchantment.KNOCKBACK)) {
-            return plugin.getGameConfig().getKnockbackMax();
+            return activePlayer.getKnockbackMax();
         } else if (enchantment.equals(Enchantment.ARROW_KNOCKBACK)) {
-            return plugin.getGameConfig().getPunchMax();
+            return activePlayer.getPunchMax();
         } else {
             return enchantment.getMaxLevel(); // not possible normally, fallback incase
         }
@@ -91,9 +96,15 @@ public class enchantmentLimiter extends initManager implements Listener {
         if (event == null) {return;}
         if (event.getItem() == null) {return;}
 
+        // consts
         final Player player = event.getEnchanter();
         final ItemStack enchantedItem = event.getItem();
         Map<Enchantment, Integer> enchantments = event.getEnchantsToAdd(); // enchantement, enchantementLevel
+
+        // activePlayer check
+        final Optional<activePlayer> optionalActivePlayer = gameUtil.isPlayerActive(player);
+        if (!optionalActivePlayer.isPresent()) {return;}
+        final activePlayer activePlayer = optionalActivePlayer.get();
 
         if (enchantments == null) {return;}
         if (enchantments.isEmpty()) {return;}
@@ -107,7 +118,7 @@ public class enchantmentLimiter extends initManager implements Listener {
             if (!modifiedEnchantments.contains(enchantment)) {continue;}
 
             // consts
-            int maxLevel = getMaxLevel(enchantedItem, enchantment);
+            int maxLevel = getMaxLevel(activePlayer, enchantedItem, enchantment);
 
             // en dessous du cap => cbon
             if (enchantementLevel <= maxLevel) {continue;}
@@ -137,6 +148,11 @@ public class enchantmentLimiter extends initManager implements Listener {
             }
         }
 
+        // activePlayer check
+        final Optional<activePlayer> optionalActivePlayer = gameUtil.isPlayerActive(player);
+        if (!optionalActivePlayer.isPresent()) {return;}
+        final activePlayer activePlayer = optionalActivePlayer.get();
+
         // not anvil inv
         if (inventory.getType() != InventoryType.ANVIL) {return;}
 
@@ -162,7 +178,7 @@ public class enchantmentLimiter extends initManager implements Listener {
                 // consts
                 final Enchantment enchantment = entry.getKey();
                 final int enchantementLevel = entry.getValue();
-                int maxLevel = getMaxLevel(resultItem, enchantment);
+                int maxLevel = getMaxLevel(activePlayer, resultItem, enchantment);
 
                 // not modified one
                 if (!modifiedEnchantments.contains(enchantment)) {continue;}

@@ -112,8 +112,8 @@ public class timerUtil extends initManager {
                 gametimeInt = gametimeInt + 1;
                 // update ingame time
                 for (activePlayer activePlayer: gameUtil.getActivePlayers()) {
-                    playerUtil.updateScoreboard(activePlayer, scoreboardLines.GAME_TIME, convertionUtil.IntegerToTime(gametimeInt));
-                    playerUtil.updateScoreboard(activePlayer, scoreboardLines.BORDER, gameUtil.getMapSize());
+                    gameUtil.updateScoreboard(activePlayer, scoreboardLines.GAME_TIME, convertionUtil.IntegerToTime(gametimeInt));
+                    gameUtil.updateScoreboard(activePlayer, scoreboardLines.BORDER, gameUtil.getWorldBorderSize());
                     // gameUtils.update("ingame-timer", new String[]{Integer.toString(gametimeInt)});
                 }
 
@@ -150,7 +150,7 @@ public class timerUtil extends initManager {
 
                 // update cycle
                 for (activePlayer activePlayer: gameUtil.getActivePlayers()) {
-                    playerUtil.updateScoreboard(activePlayer, scoreboardLines.CYCLE, (plugin.getGameConfig().isCycle() ? "Jour" : "Nuit"));
+                    gameUtil.updateScoreboard(activePlayer, scoreboardLines.CYCLE, (plugin.getGameConfig().isCycle() ? "Jour" : "Nuit"));
                 }
 
                 if (plugin.getGameConfig().isCycle()) {
@@ -193,7 +193,7 @@ public class timerUtil extends initManager {
                 // update episode
                 plugin.getGameConfig().setGameEpisode(plugin.getGameConfig().getGameEpisode() + 1);
                 for (activePlayer activePlayer: gameUtil.getActivePlayers()) {
-                    playerUtil.updateScoreboard(activePlayer, scoreboardLines.EPISODE, plugin.getGameConfig().getGameEpisode());
+                    gameUtil.updateScoreboard(activePlayer, scoreboardLines.EPISODE, plugin.getGameConfig().getGameEpisode());
                 }
 
             }

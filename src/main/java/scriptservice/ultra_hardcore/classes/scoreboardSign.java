@@ -358,8 +358,9 @@ public class scoreboardSign {
                 setSuffix("");
                 setPlayer(value + marker);
             } else if (value.length() <= 30) {
-                setPrefix(value.substring(0, 16));
-                setPlayer(value.substring(16) + marker);
+                int prefixLen = Math.min(16, value.length());
+                setPrefix(value.substring(0, prefixLen));
+                setPlayer(value.substring(prefixLen) + marker);
                 setSuffix("");
             } else if (value.length() <= 46) {
                 setPrefix(value.substring(0, 16));

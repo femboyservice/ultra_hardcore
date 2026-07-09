@@ -1,9 +1,10 @@
 package scriptservice.ultra_hardcore.utils;
 
-import net.minecraft.server.v1_8_R3.ChatComponentText;
-import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.*;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
@@ -74,6 +75,48 @@ public class playerUtil extends initManager {
     public static void sendActionTextToAll(String message) {
         for (Player player: getServer().getOnlinePlayers()) {
             sendActionText(player, message);
+        }
+    }
+
+    // titles
+    // simple by me, normal by ai (i cannot for the life of me figure out packets)
+    private String escapeJson(String s) {
+        return s.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
+
+    public static void sendSimpleTitle(Player player, String title, String message) {
+        player.sendTitle(title, message);
+    }
+
+    public static void sendSimpleTitleToAll(String title, String message) {
+        for (Player player: getServer().getOnlinePlayers()) {
+            sendSimpleTitle(player, title, message);
+        }
+    }
+
+    public static void sendTitle(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        CraftPlayer craftPlayer = (CraftPlayer) player;
+        PlayerConnection connection = craftPlayer.getHandle().playerConnection;
+
+        // fix val
+        fadeIn = Math.max(fadeIn, 0);
+        stay = Math.max(stay, 0);
+        fadeOut = Math.max(fadeOut, 0);
+
+        connection.sendPacket(new PacketPlayOutTitle(fadeIn, stay, fadeOut));
+
+        IChatBaseComponent titleComponent = CraftChatMessage.fromString(title)[0];
+        connection.sendPacket(new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.TITLE, titleComponent));
+
+        if (subtitle != null) {
+            IChatBaseComponent subtitleComponent = CraftChatMessage.fromString(subtitle)[0];
+            connection.sendPacket(new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.SUBTITLE, subtitleComponent));
+        }
+    }
+
+    public static void sendTitleToAll(String title, String message, int fadeIn, int stay, int fadeOut) {
+        for (Player player: getServer().getOnlinePlayers()) {
+            sendTitle(player, title, message, fadeIn, stay, fadeOut);
         }
     }
 

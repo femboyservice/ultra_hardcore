@@ -20,9 +20,11 @@ public class gameConfig {
     // game related
     @Getter @Setter private states gameState = states.WAIT;
     @Getter @Setter private states chatState = states.CHAT_ENABLED;
+    @Getter @Setter private states cycle = states.NIGHT;
+
+    @Getter @Setter private double borderSize = 100;
 
     @Getter @Setter private int gameEpisode = 0;
     @Getter @Setter private int gameGroups = 1;
-
-    @Getter @Setter boolean cycle = false; // true = Jour, false = Nuit
+    @Getter @Setter private boolean sendEpisodeMessage = false;
 }

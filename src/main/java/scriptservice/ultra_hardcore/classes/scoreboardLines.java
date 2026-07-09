@@ -3,15 +3,18 @@ package scriptservice.ultra_hardcore.classes;
 import lombok.Getter;
 
 public enum scoreboardLines {
-    DATE(1),
-    PLAYERS(4),
-    GAME_TIME(5),
-    GROUPS(6),
-    CYCLE(7),
-    BORDER(9),
-    EPISODE(10),
-    KILLS(11),
-    ASSISTS(12);
+    PLAYERS(2),
+    GAME_TIME(3),
+    GROUPS(4),
+    KILLS(7),
+    ASSISTS(8),
+    BORDER(11),
+    DATE(13),
+
+    // en uhc classique ya pas hein
+    CYCLE(999+1),
+    EPISODE(999+2);
+
 
     @Getter private final int line;
 

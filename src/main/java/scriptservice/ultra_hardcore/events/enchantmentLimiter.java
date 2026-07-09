@@ -2,7 +2,6 @@ package scriptservice.ultra_hardcore.events;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -135,18 +134,13 @@ public class enchantmentLimiter extends initManager implements Listener {
 
     @EventHandler
     public void onInventoryClickEvent(InventoryClickEvent event) {
+        if (!(event.getWhoClicked() instanceof Player)) {return;}
+
         // consts
+        final Player player = (Player) event.getWhoClicked();
         final Inventory inventory = event.getInventory();
         final int rawSlot = event.getRawSlot();
         ItemStack resultItem = event.getCurrentItem();
-
-        Player player = null;
-        for (HumanEntity entity: inventory.getViewers()) {
-            if (entity instanceof Player) {
-                player = (Player) entity;
-                break;
-            }
-        }
 
         // activePlayer check
         final Optional<activePlayer> optionalActivePlayer = gameUtil.isPlayerActive(player);

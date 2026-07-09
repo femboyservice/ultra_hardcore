@@ -78,6 +78,7 @@ public class timerUtil extends initManager {
             }
         };
 
+        // schedule it
         countdownTimer.scheduleAtFixedRate(countdownTimerTask, Calendar.getInstance().getTime(), (long) convertionUtil.secondToMillisecond(1));
     }
 
@@ -110,17 +111,15 @@ public class timerUtil extends initManager {
             @Override
             public void run() {
                 gametimeInt = gametimeInt + 1;
-                // update ingame time
+                // update information needed each seconds (game_time, border ?)
                 for (activePlayer activePlayer: gameUtil.getActivePlayers()) {
                     gameUtil.updateScoreboard(activePlayer, scoreboardLines.GAME_TIME, convertionUtil.IntegerToTime(gametimeInt));
-                    gameUtil.updateScoreboard(activePlayer, scoreboardLines.BORDER, gameUtil.getWorldBorderSize());
-                    // gameUtils.update("ingame-timer", new String[]{Integer.toString(gametimeInt)});
+                    gameUtil.updateScoreboard(activePlayer, scoreboardLines.BORDER, ("± " + gameUtil.getWorldBorderSize()));
                 }
-
-
             }
         };
 
+        // schedule it
         ingameTimer.scheduleAtFixedRate(ingameTimerTask, Calendar.getInstance().getTime(), (long) convertionUtil.secondToMillisecond(1));
     }
 
@@ -139,28 +138,34 @@ public class timerUtil extends initManager {
     // cycle
     public void startCycle() {
         // reset cycle
-        plugin.getGameConfig().setCycle(false);
+        plugin.getGameConfig().setCycle(states.NIGHT);
 
         // start new timer
         cycleTimer = new Timer();
         cycleTimerTask = new TimerTask() {
             @Override
             public void run() {
-                plugin.getGameConfig().setCycle(!plugin.getGameConfig().isCycle());
+                // set new cycle
+                final states newCycle = ((plugin.getGameConfig().getCycle() == states.NIGHT) ? states.DAY : states.NIGHT);
+                plugin.getGameConfig().setCycle(newCycle);
 
-                // update cycle
+                // update scoreboard
                 for (activePlayer activePlayer: gameUtil.getActivePlayers()) {
-                    gameUtil.updateScoreboard(activePlayer, scoreboardLines.CYCLE, (plugin.getGameConfig().isCycle() ? "Jour" : "Nuit"));
+                    gameUtil.updateScoreboard(activePlayer, scoreboardLines.CYCLE, ((newCycle == states.DAY) ? "Jour" : "Nuit"));
                 }
 
-                if (plugin.getGameConfig().isCycle()) {
+                // set world time & send message
+                if (newCycle == states.DAY) {
+                    gameUtil.getWorld().ifPresent(world -> world.setFullTime(6000));
                     playerUtil.sendMessageToAll(languageUtil.gets("uhc-cycle-day"));
                 } else {
+                    gameUtil.getWorld().ifPresent(world -> world.setFullTime(18000));
                     playerUtil.sendMessageToAll(languageUtil.gets("uhc-cycle-night"));
                 }
             }
         };
 
+        // schedule it
         cycleTimer.scheduleAtFixedRate(cycleTimerTask, Calendar.getInstance().getTime(), (long) timeForCycle);
     }
 
@@ -186,7 +191,7 @@ public class timerUtil extends initManager {
         episodeTimerTask = new TimerTask() {
             @Override
             public void run() {
-                if (plugin.getGameConfig().getGameEpisode() != 0) {
+                if (plugin.getGameConfig().getGameEpisode() != 0 && plugin.getGameConfig().isSendEpisodeMessage()) {
                     playerUtil.sendMessageToAll(ChatColor.AQUA + "---- Fin de l'épisode " + plugin.getGameConfig().getGameEpisode() + " ----");
                 }
 
@@ -199,6 +204,7 @@ public class timerUtil extends initManager {
             }
         };
 
+        // schedule it
         episodeTimer.scheduleAtFixedRate(episodeTimerTask, Calendar.getInstance().getTime(), (long) timeForEpisode);
     }
 

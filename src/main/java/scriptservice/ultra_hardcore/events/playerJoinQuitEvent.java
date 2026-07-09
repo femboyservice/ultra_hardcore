@@ -71,7 +71,7 @@ public class playerJoinQuitEvent extends initManager implements Listener {
             final scoreboardSign scoreboard = gameUtil.createScoreboard(activePlayer.getUUID());
             activePlayer.setScoreboard(scoreboard);
 
-            gameUtil.updateGlobalScoreboard(activePlayer.getUUID(), scoreboard);
+            gameUtil.updateAllScoreboard(activePlayer.getUUID(), scoreboard);
         }); // hein? wtf? trop bien // ok j'ai compris en vrai (je crois)
 
     }

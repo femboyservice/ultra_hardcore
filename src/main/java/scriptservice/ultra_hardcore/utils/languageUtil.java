@@ -33,30 +33,34 @@ public class languageUtil extends initManager {
                         gets("no-permission")
                 };
 
-            case "uhc-command-help-op":
+            case "uhc-command-help":
                 return new String[]{
                         getInfoPrefix() + (ChatColor.WHITE + "Toutes les commandes disponibles de ") + (ChatColor.DARK_AQUA + "/") + (ChatColor.AQUA + "uhc") + (ChatColor.DARK_AQUA + " ..."),
-                        "",
-                        (ChatColor.DARK_GREEN + "   > ") + (ChatColor.WHITE + "" + ChatColor.ITALIC + "null"),
-                        (ChatColor.GREEN + "    > ") + (ChatColor.WHITE + "help"),
-                        (ChatColor.DARK_GREEN + "   > ") + (ChatColor.WHITE + "start"),
-                        (ChatColor.DARK_GREEN + "   > ") + (ChatColor.WHITE + "stop"),
-                        (ChatColor.DARK_GREEN + "   > ") + (ChatColor.WHITE + "settings")
+                        (ChatColor.DARK_GREEN + "   > ") + (ChatColor.WHITE + "" + ChatColor.ITALIC + "help"),
+                        (ChatColor.GREEN + "   > ") + (ChatColor.WHITE + "start"),
+                        (ChatColor.GREEN + "   > ") + (ChatColor.WHITE + "stop"),
+                        (ChatColor.GREEN + "   > ") + (ChatColor.WHITE + "settings")
                 };
-            case "uhc-command-help-non-op":
-                return new String[]{
-                        getInfoPrefix() + (ChatColor.WHITE + "Toutes les commandes disponibles de ") + (ChatColor.DARK_AQUA + "/") + (ChatColor.AQUA + "uhc") + (ChatColor.DARK_AQUA + " ..."),
-                        "",
-                        (ChatColor.DARK_GREEN + "   > ") + (ChatColor.WHITE + "" + ChatColor.ITALIC + "null"),
-                        (ChatColor.GREEN + "    > ") + (ChatColor.WHITE + "help")
-                };
-
             case "scenarios-command-help":
                 return new String[]{
                         getInfoPrefix() + (ChatColor.WHITE + "Toutes les commandes disponibles de ") + (ChatColor.DARK_AQUA + "/") + (ChatColor.AQUA + "scenarios") + (ChatColor.DARK_AQUA + " ..."),
-                        "",
                         (ChatColor.DARK_GREEN + "   > ") + (ChatColor.WHITE + "" + ChatColor.ITALIC + "null"),
                         (ChatColor.GREEN + "    > ") + (ChatColor.WHITE + "help")
+                };
+            case "uhc-command-help-help":
+                return new String[]{
+                        getInfoPrefix() + (ChatColor.WHITE + "Description de la commande") + (ChatColor.DARK_GRAY + " » ") + (ChatColor.DARK_AQUA + "/uhc ") + (ChatColor.AQUA + "help"),
+                        (ChatColor.DARK_GRAY + "[") + (ChatColor.AQUA+"ⓘ") + (ChatColor.DARK_GRAY + "]") + (ChatColor.WHITE + " Vraiment besoin d'aide sur comment avoir de l'aide ..?")
+                };
+            case "uhc-command-start-help":
+                return new String[]{
+                        getInfoPrefix() + (ChatColor.WHITE + "Description de la commande") + (ChatColor.DARK_GRAY + " » ") + (ChatColor.DARK_AQUA + "/uhc ") + (ChatColor.AQUA + "start"),
+                        (ChatColor.DARK_GRAY + "[") + (ChatColor.AQUA+"ⓘ") + (ChatColor.DARK_GRAY + "]") + (ChatColor.WHITE + " Permet de commencer la partie.")
+                };
+            case "uhc-command-stop-help":
+                return new String[]{
+                        getInfoPrefix() + (ChatColor.WHITE + "Description de la commande") + (ChatColor.DARK_GRAY + " » ") + (ChatColor.DARK_AQUA + "/uhc ") + (ChatColor.AQUA + "stop"),
+                        (ChatColor.DARK_GRAY + "[") + (ChatColor.AQUA+"ⓘ") + (ChatColor.DARK_GRAY + "]") + (ChatColor.WHITE + " Permet d'arrêter la partie en cours.")
                 };
         }
 
@@ -139,6 +143,9 @@ public class languageUtil extends initManager {
                 return (ChatColor.DARK_GRAY + "» ") + (ChatColor.GOLD + "" + ChatColor.BOLD + objects[0].toString()) + (ChatColor.YELLOW + " a quitté la partie."); // [ROUGE-«] Darkness6115 (ROUGE-27/ROUGE-30)
 
 
+            case "uhc-command-setgroup-new-group":
+                if (objects.length != 1) {return (codename+"-not-enough-args");}
+                return getInfoPrefix() + (ChatColor.WHITE + "Nouvelle limite de groupe mise à ") + (ChatColor.DARK_GREEN+objects[0].toString()) + (ChatColor.WHITE + ".");
             case "uhc-command-start-already":
                 return getErrorPrefix() + (ChatColor.RED + "La partie a déjà commencé");
             case "uhc-command-stop-nothing":
@@ -150,8 +157,14 @@ public class languageUtil extends initManager {
             case "uhc-command-start-timer": // utilisation de "§" car c'est dans l'action bar
                 if (objects.length != 1) {return (codename+"-not-enough-args");}
                 return "§f" + "Démarrage de la partie dans " +
-                        "§3" + objects[0].toString() + "s" +
+                        "§2" + objects[0].toString() + "s" +
                         "§f" + ".";
+
+
+
+            case "global-command-arg-not-integer":
+                if (objects.length != 1) {return (codename+"-not-enough-args");}
+                return getErrorPrefix() + (ChatColor.AQUA + objects[0].toString() + ChatColor.RED + " n'est pas un nombre valide.");
 
 
 

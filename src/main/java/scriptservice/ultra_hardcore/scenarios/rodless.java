@@ -46,7 +46,7 @@ rodless extends scenarioManager implements Listener {
                 languageUtil.getInfoPrefix() +
                         (ChatColor.GRAY + "Players") +
                         (ChatColor.RED + " cannot ") +
-                        (ChatColor.GRAY + "craft, pickup and use") +
+                        (ChatColor.GRAY + "craft, pickup or use") +
                         (ChatColor.AQUA + " Fishing Rods ") +
                         (ChatColor.GRAY + "anymore.")
 

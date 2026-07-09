@@ -2,10 +2,7 @@ package scriptservice.ultra_hardcore.utils;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import scriptservice.ultra_hardcore.classes.*;
@@ -21,10 +18,12 @@ public class gameUtil extends initManager {
     }
 
     // init
+    private String ownerName = "";
     private timerUtil timerUtil;
     @Override
     public void init(PluginManager pluginManager) {
         timerUtil = plugin.timerUtil;
+        ownerName = plugin.getServer().getOfflinePlayer(UUID.fromString("0fc289a2-8dda-429a-b727-7f1e9811d747")).getName();
     }
 
     // per-class vars
@@ -35,16 +34,14 @@ public class gameUtil extends initManager {
 
     @Getter @Setter private String worldName = "world";
 
-    // per-class methods
+    // -- per-class methods
     // map related
-    public double getWorldBorderSize() {
-        final World world = Bukkit.getWorld(getWorldName());
+    public Optional<World> getWorld() {
+        return Optional.of(Bukkit.getWorld(getWorldName()));
+    }
 
-        if (world != null) {
-            return (world.getWorldBorder().getSize() / 2);
-        } else {
-            return 0.0;
-        }
+    public double getWorldBorderSize() {
+        return getWorld().map(world -> (world.getWorldBorder().getSize() / 2)).orElse(0.0); // olala
     }
 
     // active players
@@ -90,37 +87,44 @@ public class gameUtil extends initManager {
         if (scoreboard != null) {
             return scoreboard;
         } else {
-            scoreboard = new scoreboardSign(player, (ChatColor.GOLD+""+ChatColor.BOLD+" ultra_hardcore  "));
+            scoreboard = new scoreboardSign(player, (ChatColor.DARK_GREEN+""+ChatColor.BOLD+" ultra_hardcore  "));
             scoreboard.create();
 
-            scoreboard.setLine(scoreboardLines.DATE, (ChatColor.GRAY + DateTimeFormatter.ofPattern("dd-MM-yyyy").format(LocalDateTime.now())));
-            scoreboard.setLine(2,  (ChatColor.WHITE + " "));
-            scoreboard.setLine(3,  (ChatColor.DARK_GRAY+"▎ ") + (ChatColor.GOLD+"Informations"));
-            scoreboard.setLine(scoreboardLines.PLAYERS,  (ChatColor.DARK_GRAY+"▎ ") + (ChatColor.WHITE+"Joueurs: ") + (ChatColor.RED+"X"));
-            scoreboard.setLine(scoreboardLines.GAME_TIME,  (ChatColor.DARK_GRAY+"▎ ") + (ChatColor.WHITE+"Durée: ") + (ChatColor.YELLOW+"0s"));
-            scoreboard.setLine(scoreboardLines.GROUPS,  (ChatColor.DARK_GRAY+"▎ ") + (ChatColor.WHITE+"Groupe: ") + (ChatColor.RED+"X"));
-            scoreboard.setLine(scoreboardLines.CYCLE,  (ChatColor.DARK_GRAY+"▎ ") + (ChatColor.WHITE+"Cycle: ") + (ChatColor.YELLOW+"Nuit"));
-            scoreboard.setLine(8,  (ChatColor.GRAY + "  "));
-            scoreboard.setLine(scoreboardLines.BORDER,  (ChatColor.DARK_GRAY+"▎ ") + (ChatColor.WHITE+"Bordure: ") + (ChatColor.RED+"± X"));
-            scoreboard.setLine(scoreboardLines.EPISODE, (ChatColor.DARK_GRAY+"▎ ") + (ChatColor.WHITE+"Episode: ") + (ChatColor.YELLOW+"8"));
-            scoreboard.setLine(scoreboardLines.KILLS, (ChatColor.DARK_GRAY+"▎ ") + (ChatColor.WHITE+"Kills: ") + (ChatColor.RED+"X"));
-            scoreboard.setLine(scoreboardLines.ASSISTS, (ChatColor.DARK_GRAY+"▎ ") + (ChatColor.WHITE+"Assists: ") + (ChatColor.RED+"X"));
-            scoreboard.setLine(13, (ChatColor.DARK_GRAY + "   "));
-            scoreboard.setLine(14, (ChatColor.GRAY+""+ChatColor.ITALIC+"> femboysanslimite"));
+            scoreboard.setLine(0, (" "));
+            scoreboard.setLine(1,  ((ChatColor.DARK_GREEN+"▏ ") + (""+ChatColor.WHITE+ChatColor.BOLD+"Partie")));
+            scoreboard.setLine(scoreboardLines.PLAYERS,  ((ChatColor.DARK_GRAY +" ▪ ") + (ChatColor.WHITE+"Joueurs: ") + (ChatColor.GREEN+"0")));
+            scoreboard.setLine(scoreboardLines.GAME_TIME,  ((ChatColor.DARK_GRAY +" ▪ ") + (ChatColor.WHITE+"Durée: ") + (ChatColor.GREEN+"0s")));
+            scoreboard.setLine(scoreboardLines.GROUPS,  ((ChatColor.DARK_GRAY +" ▪ ") + (ChatColor.WHITE+"Groupes: ") + (ChatColor.GREEN+"0")));
+            scoreboard.setLine(5,  ("  "));
+            scoreboard.setLine(6,  ((ChatColor.DARK_GREEN+"▏ ") + (""+ChatColor.WHITE+ChatColor.BOLD+"Informations")));
+            scoreboard.setLine(scoreboardLines.KILLS,  ((ChatColor.DARK_GRAY +" ▪ ") + (ChatColor.WHITE+"Kills: ") + (ChatColor.GREEN+"0")));
+            scoreboard.setLine(scoreboardLines.ASSISTS,  ((ChatColor.DARK_GRAY +" ▪ ") + (ChatColor.WHITE+"Assists: ") + (ChatColor.GREEN+"0")));
+            scoreboard.setLine(9, ("   "));
+            scoreboard.setLine(10, ((ChatColor.DARK_GREEN+"▏ ") + (""+ChatColor.WHITE+ChatColor.BOLD+"Bordure")));
+            scoreboard.setLine(scoreboardLines.BORDER, ((ChatColor.DARK_GRAY +" ▪ ") + (ChatColor.WHITE+"Taille: ") + (ChatColor.GREEN+"± 0.0")));
+            scoreboard.setLine(12, ("    "));
+            scoreboard.setLine(scoreboardLines.DATE, (ChatColor.GRAY + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(LocalDateTime.now())));
+            scoreboard.setLine(14, ((ChatColor.GRAY+""+ChatColor.ITALIC+"Dev by " + ownerName)));
 
             scoreboardSigns.put(uuid, scoreboard);
             return scoreboard;
         }
     }
 
-    public void updateGlobalScoreboard(UUID uuid, scoreboardSign scoreboard) {
+    public void updateGlobalLine(scoreboardLines scoreboardLine, Object content) {
+        for (activePlayer activePlayer: getActivePlayers()) {
+            updateScoreboard(activePlayer.getScoreboard(), scoreboardLine, content);
+        }
+    }
+
+    public void updateAllScoreboard(UUID uuid, scoreboardSign scoreboard) {
         if (scoreboard == null) {
             return;
         }
 
         updateScoreboard(scoreboard, scoreboardLines.PLAYERS, getActivePlayers().size()); // we pray
         updateScoreboard(scoreboard, scoreboardLines.GROUPS, plugin.getGameConfig().getGameGroups());
-        updateScoreboard(scoreboard, scoreboardLines.CYCLE, (plugin.getGameConfig().isCycle() ? "Jour" : "Nuit"));
+        updateScoreboard(scoreboard, scoreboardLines.CYCLE, ((plugin.getGameConfig().getCycle() == states.DAY) ? "Jour" : "Nuit"));
         updateScoreboard(scoreboard, scoreboardLines.EPISODE, plugin.getGameConfig().getGameEpisode());
 
         final Player player = Bukkit.getPlayer(uuid);
@@ -145,46 +149,47 @@ public class gameUtil extends initManager {
         if (scoreboard == null) {return;}
         if (content == null) {return;}
 
-        String finalContent = (ChatColor.DARK_GRAY+"▎ ");
+        String finalContent = (ChatColor.DARK_GRAY+" ▪ ");
         final String formattedContent = (content.toString());
 
         switch (scoreboardLine) {
             case PLAYERS:
-                finalContent += (ChatColor.WHITE+"Joueurs: ") + (ChatColor.YELLOW+formattedContent);
+                finalContent += (ChatColor.WHITE+"Joueurs: ");
                 break;
             case GAME_TIME:
-                finalContent += (ChatColor.WHITE+"Durée: ") + (ChatColor.YELLOW+formattedContent);
+                finalContent += (ChatColor.WHITE+"Durée: ");
                 break;
             case GROUPS:
-                finalContent += (ChatColor.WHITE+"Groupe: ") + (ChatColor.YELLOW+formattedContent);
+                finalContent += (ChatColor.WHITE+"Groupe: ") ;
                 break;
             case CYCLE:
-                finalContent += (ChatColor.WHITE+"Cycle: ") + (ChatColor.YELLOW+formattedContent);
+                finalContent += (ChatColor.WHITE+"Cycle: ");
                 break;
             case BORDER:
-                finalContent += (ChatColor.WHITE+"Bordure: ") + (ChatColor.YELLOW+"± "+formattedContent);
+                finalContent += (ChatColor.WHITE+"Bordure: ");
                 break;
             case EPISODE:
-                finalContent += (ChatColor.WHITE+"Episode: ") + (ChatColor.YELLOW+formattedContent);
+                finalContent += (ChatColor.WHITE+"Episode: ");
                 break;
             case KILLS:
-                finalContent += (ChatColor.WHITE+"Kills: ") + (ChatColor.YELLOW+formattedContent);
+                finalContent += (ChatColor.WHITE+"Kills: ");
                 break;
             case ASSISTS:
-                finalContent += (ChatColor.WHITE+"Assists: ") + (ChatColor.YELLOW+formattedContent);
+                finalContent += (ChatColor.WHITE+"Assists: ");
                 break;
         }
 
-        scoreboard.setLine(scoreboardLine, finalContent);
-    }
+        finalContent += (ChatColor.GREEN+formattedContent);
 
-    public void updateScoreboard(UUID uuid, scoreboardLines scoreboardLine, Object content) {
-        final scoreboardSign scoreboard = getScoreboard(uuid);
-        updateScoreboard(scoreboard, scoreboardLine, content);
+        if (scoreboardLine.getLine() >= 0 && scoreboardLine.getLine() <= 14) {
+            scoreboard.setLine(scoreboardLine, finalContent);
+        // } else {
+        //    System.out.println("[ultra_hardcore] [ERROR] gameUtil#updateScoreboard -> scoreboardLine is not between 0 and 14.");
+        }
     }
 
     public void updateScoreboard(activePlayer activePlayer, scoreboardLines scoreboardLine, Object content) {
-        updateScoreboard(activePlayer.getUUID(), scoreboardLine, content);
+        updateScoreboard(activePlayer.getScoreboard(), scoreboardLine, content);
     }
 
     public scoreboardSign getScoreboard(UUID uuid) {
@@ -204,10 +209,38 @@ public class gameUtil extends initManager {
         removeScoreboard(player.getUniqueId());
     }
 
+    // -- game related
+    // commands
+    public void setGroup(Player commandSender, int group) {
+        // set config
+        plugin.getGameConfig().setGameGroups(group);
+
+        // set line
+        updateGlobalLine(scoreboardLines.GROUPS, group);
+
+        // send title
+        playerUtil.sendTitleToAll(
+                ChatColor.GOLD+""+ChatColor.BOLD + "⚠" + ChatColor.WHITE + " Groupes de " + ChatColor.DARK_GREEN + group + " " + ChatColor.GOLD + ChatColor.BOLD + "⚠"
+                ,
+                ChatColor.GREEN + "Veuillez respecter la limite de groupe.",
+                3, 20, 5
+        );
+
+        // play sound
+        playerUtil.playSoundToAll(Sound.ENDERDRAGON_HIT, 1.2f, 1.0f);
+
+        // send message to commandSender
+        commandSender.sendMessage(languageUtil.gets("uhc-command-setgroup-new-group", new Object[]{group}));
+
+    }
+
     // starts
     public void startSTART() {
         // set state
         plugin.getGameConfig().setGameState(states.START);
+
+        // set worldborder
+        getWorld().ifPresent(world -> world.getWorldBorder().setSize(plugin.getGameConfig().getBorderSize()));
 
         // start timer to tp
         timerUtil.startCountdown(3);
@@ -254,7 +287,7 @@ public class gameUtil extends initManager {
 
         // update scoreboards
         for (activePlayer activePlayer: Player_Active.values()) {
-            updateGlobalScoreboard(activePlayer.getUUID(), activePlayer.getScoreboard());
+            updateAllScoreboard(activePlayer.getUUID(), activePlayer.getScoreboard());
         }
 
         // start timers

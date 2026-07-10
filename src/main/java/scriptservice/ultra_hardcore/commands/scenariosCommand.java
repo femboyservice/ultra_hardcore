@@ -53,6 +53,9 @@ public class scenariosCommand extends initManager implements CommandExecutor, Ta
         plugin.getCommand("sc").setExecutor(this);
         plugin.getCommand("sc").setTabCompleter(this);
 
+        plugin.getCommand("scs").setExecutor(this);
+        plugin.getCommand("scs").setTabCompleter(this);
+
         // register events
         pluginManager.registerEvents(this, plugin);
     }

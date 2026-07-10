@@ -22,9 +22,10 @@ public class gameConfig {
     @Getter @Setter private states chatState = states.CHAT_ENABLED;
     @Getter @Setter private states cycle = states.NIGHT;
 
-    @Getter @Setter private double borderSize = 100;
+    @Getter @Setter private double borderSize = 200;
 
     @Getter @Setter private int gameEpisode = 0;
     @Getter @Setter private int gameGroups = 1;
     @Getter @Setter private boolean sendEpisodeMessage = false;
+    @Getter @Setter private boolean sendCycleMessage = false;
 }

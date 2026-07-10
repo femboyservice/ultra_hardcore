@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.potion.PotionEffectType;
 import scriptservice.ultra_hardcore.classes.initManager;
+import scriptservice.ultra_hardcore.classes.states;
 import scriptservice.ultra_hardcore.uhc;
 
 import java.math.BigDecimal;
@@ -40,9 +41,13 @@ public class damagePatcher extends initManager implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // askip c'est mieux
     public void onEvent(EntityDamageByEntityEvent event) {
-        // TODO :: check if game started, if not, cancel event (no damage !!)
-        critUtil.patch(event, plugin.getGameConfig().getCritPercentage()); // patch crit damages
-        strengthUtil.patch(event, plugin.getGameConfig().getStrengthPercentage());
+        // check if game started, if not, cancel event (no damage !!)
+        if (plugin.getGameConfig().getGameState() == states.WAIT) {
+            event.setCancelled(true);
+        } else {
+            critUtil.patch(event, plugin.getGameConfig().getCritPercentage()); // patch crit damages
+            strengthUtil.patch(event, plugin.getGameConfig().getStrengthPercentage());
+        }
     }
 
     // event util class
@@ -158,7 +163,7 @@ public class damagePatcher extends initManager implements Listener {
 
             Player p = (Player) event.getDamager();
             double attackValue = getAttackValue(p, event);
-            DecimalFormat df = new DecimalFormat("0.00");//Les dégats de la force diffère a 0.0000001 environ.
+            DecimalFormat df = new DecimalFormat("0.00");//Les dégats de la force diffère à 0.0000001 environ.
             return !df.format(event.getOriginalDamage(EntityDamageEvent.DamageModifier.BASE)).equals(df.format(attackValue));//Si les dégats sont pas pareil on return true
         }
 

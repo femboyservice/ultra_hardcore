@@ -11,3 +11,5 @@ commands:
     description: commande holder pour les scenarios
   sc:
     description: commande holder pour les scenarios
+  scs:
+    description: commande holder pour les scenarios

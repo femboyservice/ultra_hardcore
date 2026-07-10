@@ -57,4 +57,15 @@ public class activePlayer {
             System.out.println("[ultra_hardcore] couldn't get player from following uuid: " + uuid);
         }
     }
+
+    public void destroy() {
+        setPlayer(null);
+        setUUID(null);
+
+        if (getScoreboard() != null) {
+            getScoreboard().destroy();
+        }
+
+        setScoreboard(null);
+    }
 }

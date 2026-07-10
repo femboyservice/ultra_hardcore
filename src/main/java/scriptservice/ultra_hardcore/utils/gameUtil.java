@@ -3,6 +3,7 @@ package scriptservice.ultra_hardcore.utils;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import scriptservice.ultra_hardcore.classes.*;
@@ -33,6 +34,48 @@ public class gameUtil extends initManager {
     @Getter private final HashMap<UUID, scoreboardSign> scoreboardSigns = new HashMap<>();
 
     @Getter @Setter private String worldName = "world";
+    private final HashMap<String, Byte> colorMap = new HashMap<>(); {
+        colorMap.put("white", (byte) 0);
+        colorMap.put("orange", (byte) 1);
+        colorMap.put("magenta", (byte) 2);
+
+        colorMap.put("lblue", (byte) 3);
+        colorMap.put("l_blue", (byte) 3);
+        colorMap.put("light_blue", (byte) 3);
+        colorMap.put("lightblue", (byte) 3);
+
+        colorMap.put("yellow", (byte) 4);
+        colorMap.put("lime", (byte) 5);
+        colorMap.put("pink", (byte) 6);
+        colorMap.put("gray", (byte) 7);
+        colorMap.put("grey", (byte) 7);
+
+        colorMap.put("lgray", (byte) 8);
+        colorMap.put("l_gray", (byte) 8);
+        colorMap.put("light_gray", (byte) 8);
+        colorMap.put("lightgray", (byte) 8);
+
+        colorMap.put("lgrey", (byte) 8);
+        colorMap.put("l_grey", (byte) 8);
+        colorMap.put("light_grey", (byte) 8);
+        colorMap.put("lightgrey", (byte) 8);
+
+        colorMap.put("cyan", (byte) 9);
+        colorMap.put("purple", (byte) 10);
+        colorMap.put("blue", (byte) 11);
+        colorMap.put("brown", (byte) 12);
+        colorMap.put("green", (byte) 13);
+        colorMap.put("red", (byte) 14);
+        colorMap.put("black", (byte) 15);
+
+        colorMap.put("GLASS", (byte) 16);
+        colorMap.put("glass", (byte) 16);
+
+        colorMap.put("barrier", (byte) 17);
+
+        colorMap.put("bedrock", (byte) 18);
+    }
+    private final ArrayList<Block> temporaryBlocks = new ArrayList<>();
 
     // -- per-class methods
     // map related
@@ -42,6 +85,101 @@ public class gameUtil extends initManager {
 
     public double getWorldBorderSize() {
         return getWorld().map(world -> (world.getWorldBorder().getSize() / 2)).orElse(0.0); // olala
+    }
+
+    private void setBlockType(Block block, Material material) {
+        Bukkit.getScheduler().runTask(plugin, () -> block.setType(material, false));
+    }
+
+    @SuppressWarnings("deprecation")
+    private void setBlockColorData(Block block, byte color) {
+        Bukkit.getScheduler().runTask(plugin, () -> block.setData(color));
+    }
+
+    private void spawnPlatform(int radius, Location location, byte color, boolean walls) {
+        // consts
+        Material materialUsed = Material.STAINED_GLASS;
+        final World world = location.getWorld();
+        int centerX = location.getBlockX();
+        int centerY = location.getBlockY();
+        int centerZ = location.getBlockZ();
+
+        // decide custom material
+        switch (color) {
+            case ((byte) 16):
+                materialUsed = Material.GLASS;
+                break;
+            case ((byte) 17):
+                materialUsed = Material.BARRIER;
+                break;
+            case ((byte) 18):
+                materialUsed = Material.BEDROCK;
+                break;
+        }
+
+        // square around location with radius;
+        for (int offsetX = -radius; offsetX <= radius; offsetX++) {
+            for (int offsetZ = -radius; offsetZ <= radius; offsetZ++) {
+                // get block
+                Block block = world.getBlockAt(centerX + offsetX, centerY, centerZ + offsetZ);
+
+                // pre-set materials
+                if (block.getLocation().equals(location)) {
+                    // middle block
+                    setBlockType(block, Material.BEDROCK);
+                } else if ((offsetZ == radius || offsetZ == -radius || offsetX == radius || offsetX == -radius) & walls) {
+                    // walls
+                    setBlockType(block, Material.BEDROCK);
+
+                    Block wallBlock = world.getBlockAt(centerX + offsetX, centerY+2, centerZ + offsetZ);
+                    setBlockType(wallBlock, Material.BARRIER);
+                    temporaryBlocks.add(wallBlock);
+                } else {
+                    // others
+                    setBlockType(block, materialUsed);
+                }
+
+                // color glass if material is stained_glass
+                if (materialUsed == Material.STAINED_GLASS) {
+                    setBlockColorData(block, color);
+                }
+
+                // add to unbreakable blocks
+                temporaryBlocks.add(block);
+            }
+        }
+    }
+
+    private void spawnPlatform(int radius, Location location, String color, boolean walls) {
+        spawnPlatform(
+                radius,
+                location,
+                ((colorMap.get(color) != null) ? colorMap.get(color) : (byte) 16),  // defaults to white
+                walls
+        );
+    }
+
+    private Location getRandomLocation(int radius, int y) {
+        int range = ((radius)-(-radius)+1);
+        int randomX = (int) (Math.random() * range) + (-radius);
+        int randomZ = (int) (Math.random() * range) + (-radius);
+
+        return getWorld().map(world -> new Location(world, randomX, y, randomZ)).orElse(null); // giga kiffe
+    }
+
+    public Location spawnRandomPlatform(int spawnRadius, int y, int platformRadius, String color, boolean walls) {
+        Location newLocation = getRandomLocation(spawnRadius, y);
+        spawnPlatform(platformRadius, newLocation, color, walls);
+
+        return new Location(newLocation.getWorld(), (newLocation.getBlockX() + 0.5), (newLocation.getBlockY() + 2), (newLocation.getBlockZ() + 0.5)); // +2 blocks height for player location
+    }
+
+    private void clearTemporaryBlocks() {
+        for (Block block: temporaryBlocks) {
+            setBlockType(block, Material.AIR);
+        }
+
+        temporaryBlocks.clear();
     }
 
     // active players
@@ -56,17 +194,6 @@ public class gameUtil extends initManager {
 
     public Collection<activePlayer> getActivePlayers() {
         return Player_Active.values();
-    }
-
-    public activePlayer[] getActivePlayers(boolean alive) {
-        ArrayList<activePlayer> arrayList = new ArrayList<>();
-
-        for (activePlayer activePlayer: getActivePlayers()) {
-            if (activePlayer.isAlive() == alive) {
-                arrayList.add(activePlayer);
-            }
-        }
-        return arrayList.toArray(new activePlayer[0]);
     }
 
     public Optional<activePlayer> isPlayerActive(Player player) {
@@ -149,40 +276,12 @@ public class gameUtil extends initManager {
         if (scoreboard == null) {return;}
         if (content == null) {return;}
 
-        String finalContent = (ChatColor.DARK_GRAY+" ▪ ");
-        final String formattedContent = (content.toString());
-
-        switch (scoreboardLine) {
-            case PLAYERS:
-                finalContent += (ChatColor.WHITE+"Joueurs: ");
-                break;
-            case GAME_TIME:
-                finalContent += (ChatColor.WHITE+"Durée: ");
-                break;
-            case GROUPS:
-                finalContent += (ChatColor.WHITE+"Groupe: ") ;
-                break;
-            case CYCLE:
-                finalContent += (ChatColor.WHITE+"Cycle: ");
-                break;
-            case BORDER:
-                finalContent += (ChatColor.WHITE+"Bordure: ");
-                break;
-            case EPISODE:
-                finalContent += (ChatColor.WHITE+"Episode: ");
-                break;
-            case KILLS:
-                finalContent += (ChatColor.WHITE+"Kills: ");
-                break;
-            case ASSISTS:
-                finalContent += (ChatColor.WHITE+"Assists: ");
-                break;
-        }
-
-        finalContent += (ChatColor.GREEN+formattedContent);
 
         if (scoreboardLine.getLine() >= 0 && scoreboardLine.getLine() <= 14) {
-            scoreboard.setLine(scoreboardLine, finalContent);
+            scoreboard.setLine(
+                    scoreboardLine,
+                    (ChatColor.DARK_GRAY+" ▪ ") + (ChatColor.WHITE + scoreboardLine.getPrefix() + ": ") + (ChatColor.GREEN + content.toString())
+            );
         // } else {
         //    System.out.println("[ultra_hardcore] [ERROR] gameUtil#updateScoreboard -> scoreboardLine is not between 0 and 14.");
         }
@@ -231,7 +330,6 @@ public class gameUtil extends initManager {
 
         // send message to commandSender
         commandSender.sendMessage(languageUtil.gets("uhc-command-setgroup-new-group", new Object[]{group}));
-
     }
 
     // starts
@@ -253,8 +351,27 @@ public class gameUtil extends initManager {
         // message
         playerUtil.sendActionTextToAll(languageUtil.gets("uhc-command-start-teleport")); // "§fTéléportation des joueurs."
 
-        // teleport players
-        // TODO :: load map - create tp platforms - tp ppl - tps fix
+        // create platforms
+        for (Player player: Bukkit.getOnlinePlayers()) {
+            if (!(player.getGameMode() == GameMode.SPECTATOR)) {
+                // -- !spectators
+                // create platform
+                Location platformLocation = spawnRandomPlatform(
+                        (int) getWorldBorderSize(),
+                        150,
+                        3,
+                        "green",
+                        true
+                );
+
+                // teleport with delay
+                player.teleport(platformLocation);
+                playerUtil.sendMessageToAll(languageUtil.gets("pregame-teleport", new Object[]{player.getName()}));
+            } else {
+                // -- spectators
+                getWorld().ifPresent(world -> player.teleport(new Location(world, 0, world.getHighestBlockYAt(0, 0), 0)));
+            }
+        } // TODO :: tps fix ?
 
         // start PREGAME
         startPREGAME();
@@ -264,36 +381,62 @@ public class gameUtil extends initManager {
         // set state
         plugin.getGameConfig().setGameState(states.PREGAME);
 
-        // disable chat
-        plugin.getGameConfig().setChatState(states.CHAT_DISABLED);
-        playerUtil.sendMessageToAll(languageUtil.gets("uhc-chat-now-disabled"));
+        // schedule task 5 sec later
+        Timer tempTimer = new Timer();
+        tempTimer.scheduleAtFixedRate(new TimerTask() {
+            int finalCounter = 5;
 
-        // TODO :: clear platforms && temps blocks
+            @Override
+            public void run() {
+                if (finalCounter > 0) {
+                    // send title
+                    playerUtil.sendTitleToAll(
+                            (ChatColor.DARK_GREEN + "" + ChatColor.BOLD + finalCounter),
+                            null,
+                            5, 20, 0
+                    );
 
-        // setup active players (survival, creative, adventure) -> info + scoreboard
-        for (Player player: playerUtil.getPlayers(new GameMode[]{GameMode.SURVIVAL, GameMode.CREATIVE, GameMode.ADVENTURE})) {
-            // create joueur
-            activePlayer activePlayer = setupActivePlayer(player);
+                    // update
+                    finalCounter -= 1;
+                } else {
+                    // disable chat
+                    plugin.getGameConfig().setChatState(states.CHAT_DISABLED);
+                    playerUtil.sendMessageToAll(languageUtil.gets("uhc-chat-now-disabled"));
 
-            // setup infos
-            activePlayer.setAlive(true);
-            activePlayer.setScoreboard(createScoreboard(player));
-        }
+                    // clear temp blocks
+                    clearTemporaryBlocks();
 
-        // TODO :: setup spectators (spectator)
-        for (Player player: playerUtil.getPlayers(GameMode.SPECTATOR)) {
-            player.sendMessage(languageUtil.gets("uhc-now-spectator"));
-        }
+                    // setup active players (survival, creative, adventure) -> info + scoreboard
+                    for (Player player: playerUtil.getPlayers(new GameMode[]{GameMode.SURVIVAL, GameMode.CREATIVE, GameMode.ADVENTURE})) {
+                        // create joueur
+                        activePlayer activePlayer = setupActivePlayer(player);
 
-        // update scoreboards
-        for (activePlayer activePlayer: Player_Active.values()) {
-            updateAllScoreboard(activePlayer.getUUID(), activePlayer.getScoreboard());
-        }
+                        // setup infos
+                        activePlayer.setAlive(true);
+                        activePlayer.setScoreboard(createScoreboard(player));
+                    }
 
-        // start timers
-        timerUtil.startInGame();
-        timerUtil.startCycle();
-        timerUtil.startEpisode();
+                    // TODO :: setup spectators
+                    for (Player player: playerUtil.getPlayers(GameMode.SPECTATOR)) {
+                        player.sendMessage(languageUtil.gets("uhc-now-spectator"));
+                    }
+
+                    // update scoreboards
+                    for (activePlayer activePlayer: Player_Active.values()) {
+                        updateAllScoreboard(activePlayer.getUUID(), activePlayer.getScoreboard());
+                    }
+
+                    // start timers
+                    timerUtil.startInGame();
+                    // timerUtil.startCycle();
+                    // timerUtil.startEpisode();
+
+                    // cancel & null Timer and Task
+                    tempTimer.cancel();
+                    this.cancel();
+                }
+            }
+        }, Calendar.getInstance().getTime(), (long) convertionUtil.secondToMillisecond(1));
     }
 
     public void startGAME() {
@@ -323,8 +466,8 @@ public class gameUtil extends initManager {
         plugin.getGameConfig().setGameState(states.WAIT);
 
         // stop timers
-        timerUtil.stopCycle();
         timerUtil.stopInGame();
+        timerUtil.stopCycle();
         timerUtil.stopEpisode();
         timerUtil.stopCountdown(false);
 
@@ -363,17 +506,22 @@ public class gameUtil extends initManager {
 
             // remove scoreboards
             removeScoreboard(player);
+
+            // destroy?
+            activePlayer.destroy();
         }
 
         // clear lists
         Player_Active.clear();
         Active_Player.clear();
+
+        // enable chat
+        plugin.getGameConfig().setChatState(states.CHAT_ENABLED);
     }
 
     public void stopGAME() {
         stopPREGAME();
 
         // destroy joueur class
-
     }
 }

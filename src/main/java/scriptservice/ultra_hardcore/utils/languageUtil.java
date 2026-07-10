@@ -15,13 +15,14 @@ public class languageUtil extends initManager {
     // globals
     private final static String resetEscape = (ChatColor.RESET + "\n");
     @Getter private final static String infoPrefix = ((ChatColor.DARK_GRAY + "{") + (ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "ultra_hardcore") + (ChatColor.DARK_GRAY + "} ")) + ChatColor.RESET;
+    @Getter private final static String validPrefix = ((ChatColor.DARK_GRAY + "{") + (ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "ultra_hardcore") + (ChatColor.DARK_GRAY + "} ")) + ChatColor.RESET;
     @Getter private final static String errorPrefix = ((ChatColor.DARK_GRAY + "{") + (ChatColor.RED + "" + ChatColor.BOLD + "ultra_hardcore") + (ChatColor.DARK_GRAY + "} ")) + ChatColor.RESET;
 
     // init
     @Override
     public void init(PluginManager pluginManager) {}
 
-    // per-class methods
+    // per-class methods ⓤⓘ
     public static String[] getm(String codename, Object[] objects) {
         // return new String[]{};
         switch (codename) {
@@ -39,7 +40,8 @@ public class languageUtil extends initManager {
                         (ChatColor.DARK_GREEN + "   > ") + (ChatColor.WHITE + "" + ChatColor.ITALIC + "help"),
                         (ChatColor.GREEN + "   > ") + (ChatColor.WHITE + "start"),
                         (ChatColor.GREEN + "   > ") + (ChatColor.WHITE + "stop"),
-                        (ChatColor.GREEN + "   > ") + (ChatColor.WHITE + "settings")
+                        (ChatColor.GREEN + "   > ") + (ChatColor.WHITE + "settings"),
+                        (ChatColor.GREEN + "   > ") + (ChatColor.WHITE + "setgroup")
                 };
             case "scenarios-command-help":
                 return new String[]{
@@ -50,21 +52,30 @@ public class languageUtil extends initManager {
             case "uhc-command-help-help":
                 return new String[]{
                         getInfoPrefix() + (ChatColor.WHITE + "Description de la commande") + (ChatColor.DARK_GRAY + " » ") + (ChatColor.DARK_AQUA + "/uhc ") + (ChatColor.AQUA + "help"),
-                        (ChatColor.DARK_GRAY + "[") + (ChatColor.AQUA+"ⓘ") + (ChatColor.DARK_GRAY + "]") + (ChatColor.WHITE + " Vraiment besoin d'aide sur comment avoir de l'aide ..?")
+                        (ChatColor.DARK_GRAY + "[") + (ChatColor.AQUA+"ⓘ") + (ChatColor.DARK_GRAY + "]") + (ChatColor.WHITE + " Vraiment besoin d'aide sur comment avoir de l'aide ..?"),
+                        (ChatColor.DARK_GRAY + "[") + (ChatColor.AQUA+"ⓤ") + (ChatColor.DARK_GRAY + "]") + (ChatColor.DARK_AQUA + " /uhc help ") + (ChatColor.AQUA+"<command>")
                 };
             case "uhc-command-start-help":
                 return new String[]{
                         getInfoPrefix() + (ChatColor.WHITE + "Description de la commande") + (ChatColor.DARK_GRAY + " » ") + (ChatColor.DARK_AQUA + "/uhc ") + (ChatColor.AQUA + "start"),
-                        (ChatColor.DARK_GRAY + "[") + (ChatColor.AQUA+"ⓘ") + (ChatColor.DARK_GRAY + "]") + (ChatColor.WHITE + " Permet de commencer la partie.")
+                        (ChatColor.DARK_GRAY + "[") + (ChatColor.AQUA+"ⓘ") + (ChatColor.DARK_GRAY + "]") + (ChatColor.WHITE + " Permet de commencer la partie."),
+                        (ChatColor.DARK_GRAY + "[") + (ChatColor.AQUA+"ⓤ") + (ChatColor.DARK_GRAY + "]") + (ChatColor.DARK_AQUA + " /uhc ") + (ChatColor.AQUA+"start")
                 };
             case "uhc-command-stop-help":
                 return new String[]{
                         getInfoPrefix() + (ChatColor.WHITE + "Description de la commande") + (ChatColor.DARK_GRAY + " » ") + (ChatColor.DARK_AQUA + "/uhc ") + (ChatColor.AQUA + "stop"),
-                        (ChatColor.DARK_GRAY + "[") + (ChatColor.AQUA+"ⓘ") + (ChatColor.DARK_GRAY + "]") + (ChatColor.WHITE + " Permet d'arrêter la partie en cours.")
+                        (ChatColor.DARK_GRAY + "[") + (ChatColor.AQUA+"ⓘ") + (ChatColor.DARK_GRAY + "]") + (ChatColor.WHITE + " Permet d'arrêter la partie en cours."),
+                        (ChatColor.DARK_GRAY + "[") + (ChatColor.AQUA+"ⓤ") + (ChatColor.DARK_GRAY + "]") + (ChatColor.DARK_AQUA + " /uhc ") + (ChatColor.AQUA+"stop")
+                };
+            case "uhc-command-setgroup-help":
+                return new String[]{
+                        getInfoPrefix() + (ChatColor.WHITE + "Description de la commande") + (ChatColor.DARK_GRAY + " » ") + (ChatColor.DARK_AQUA + "/uhc ") + (ChatColor.AQUA + "setgroup"),
+                        (ChatColor.DARK_GRAY + "[") + (ChatColor.AQUA+"ⓘ") + (ChatColor.DARK_GRAY + "]") + (ChatColor.WHITE + " Permet de changer la limite de groupe."),
+                        (ChatColor.DARK_GRAY + "[") + (ChatColor.AQUA+"ⓤ") + (ChatColor.DARK_GRAY + "]") + (ChatColor.DARK_AQUA + " /uhc setgroup ") + (ChatColor.AQUA+"<nombre>")
                 };
         }
 
-        return new String[]{codename + "-not-found"};
+        return new String[]{codename + "-not-found-multiple"};
     }
 
     public static String[] getm(String codename) {
@@ -143,9 +154,13 @@ public class languageUtil extends initManager {
                 return (ChatColor.DARK_GRAY + "» ") + (ChatColor.GOLD + "" + ChatColor.BOLD + objects[0].toString()) + (ChatColor.YELLOW + " a quitté la partie."); // [ROUGE-«] Darkness6115 (ROUGE-27/ROUGE-30)
 
 
+
             case "uhc-command-setgroup-new-group":
                 if (objects.length != 1) {return (codename+"-not-enough-args");}
                 return getInfoPrefix() + (ChatColor.WHITE + "Nouvelle limite de groupe mise à ") + (ChatColor.DARK_GREEN+objects[0].toString()) + (ChatColor.WHITE + ".");
+            case "uhc-command-setgroup-game-not-started":
+                return getErrorPrefix() + (ChatColor.RED + "Vous ne pouvez pas changer les groupes tant que la partie n'a pas encore commencé.");
+
             case "uhc-command-start-already":
                 return getErrorPrefix() + (ChatColor.RED + "La partie a déjà commencé");
             case "uhc-command-stop-nothing":
@@ -204,17 +219,25 @@ public class languageUtil extends initManager {
                         (ChatColor.DARK_BLUE+"☾"+ChatColor.BLUE+" LA NUIT TOMBE "+ChatColor.DARK_BLUE+"☽")
                 );
 
+
+
             case "uhc-chat-enabled":
-                return (ChatColor.GREEN+"Le chat est activé.");
+                return (ChatColor.GREEN+"Le chat est activé."); // alors, faudra me dire quand je l'utiliserai mais je vois pas trop ^^'
             case "uhc-chat-disabled":
-                return (ChatColor.RED+"Le chat est desactivé.");
+                return (ChatColor.RED+"Le chat est désactivé.");
             case "uhc-chat-now-enabled":
                 return (ChatColor.GREEN+"Le chat est de nouveau activé.");
             case "uhc-chat-now-disabled":
-                return (ChatColor.RED+"Le chat a été desactivé.");
+                return (ChatColor.RED+"Le chat a été désactivé.");
+
+
+
+            case "pregame-teleport":
+                if (objects.length != 1) {return (codename+"-not-enough-args");}
+                return getInfoPrefix() + (ChatColor.WHITE + "Téléportation de ") + (ChatColor.GREEN + objects[0].toString()) + (ChatColor.WHITE + ".");
         }
 
-        return (codename + "-not-found");
+        return (codename + "-not-found-single");
     }
 
     public static String gets(String codename) {

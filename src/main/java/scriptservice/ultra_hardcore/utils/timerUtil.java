@@ -46,7 +46,7 @@ public class timerUtil extends initManager {
 
     // -- //  per-class methods
     // countdown
-    public void startCountdown(final int countdown) {
+    public void startCountdown(int countdown) {
         plugin.getGameConfig().setGameState(states.START);
 
         countdownTimer = new Timer();
@@ -74,7 +74,6 @@ public class timerUtil extends initManager {
                     // set to null
                     stopCountdown(false);
                 }
-
             }
         };
 
@@ -157,10 +156,10 @@ public class timerUtil extends initManager {
                 // set world time & send message
                 if (newCycle == states.DAY) {
                     gameUtil.getWorld().ifPresent(world -> world.setFullTime(6000));
-                    playerUtil.sendMessageToAll(languageUtil.gets("uhc-cycle-day"));
+                    if (plugin.getGameConfig().isSendCycleMessage()) {playerUtil.sendMessageToAll(languageUtil.gets("uhc-cycle-day"));}
                 } else {
                     gameUtil.getWorld().ifPresent(world -> world.setFullTime(18000));
-                    playerUtil.sendMessageToAll(languageUtil.gets("uhc-cycle-night"));
+                    if (plugin.getGameConfig().isSendCycleMessage()) {playerUtil.sendMessageToAll(languageUtil.gets("uhc-cycle-night"));}
                 }
             }
         };

@@ -41,15 +41,15 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
         mainCommands.add("help");
         mainCommands.add("start");
         mainCommands.add("stop");
-        mainCommands.add("settings");
         mainCommands.add("setgroup");
+        mainCommands.add("settings");
     }
 
     private static final ArrayList<String> secondCommands = new ArrayList<>(); {
         secondCommands.add("start");
         secondCommands.add("stop");
-        secondCommands.add("settings");
         secondCommands.add("setgroup");
+        secondCommands.add("settings");
     }
 
     // command executor
@@ -194,6 +194,12 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
                 return;
             }
 
+            // check gameState
+            if (plugin.getGameConfig().getGameState() == states.WAIT) {
+                player.sendMessage(languageUtil.gets("uhc-command-setgroup-game-not-started"));
+                return;
+            }
+
             // check arg
             try {
                 gameUtil.setGroup(player, Integer.parseInt(arg));
@@ -205,7 +211,17 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
         public static void run(Player player, String actionName, String arg) {
             switch (actionName) {
                 case "help":
-                    player.sendMessage(languageUtil.getm("uhc-command" + ((arg == null || arg.isEmpty()) ? "" : ("-" + arg)) + "-help"));
+                    if (arg == null || arg.isEmpty()) {
+                        player.sendMessage(languageUtil.getm("uhc-command-help"));
+                    } else {
+                        arg = arg.toLowerCase();
+                        if (mainCommands.contains(arg)) {
+                            player.sendMessage(languageUtil.getm("uhc-command" + "-" + arg + "-help"));
+                        } else {
+                            player.sendMessage(languageUtil.gets("general-command-introuvable", new Object[]{arg}));
+                        }
+                    }
+
                     break;
                 case "start":
                     commandStart(player);

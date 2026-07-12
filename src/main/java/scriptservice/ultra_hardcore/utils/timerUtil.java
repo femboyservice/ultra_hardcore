@@ -69,7 +69,7 @@ public class timerUtil extends initManager {
                     playerUtil.playSoundToAll(Sound.CHICKEN_EGG_POP);
 
                     // start teleport phase
-                    gameUtil.startTELEPORT();
+                    gameUtil.teleport();
 
                     // set to null
                     stopCountdown(false);

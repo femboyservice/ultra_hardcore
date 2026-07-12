@@ -9,6 +9,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 import scriptservice.ultra_hardcore.classes.activePlayer;
 import scriptservice.ultra_hardcore.classes.initManager;
+import scriptservice.ultra_hardcore.classes.scoreboardLines;
 import scriptservice.ultra_hardcore.classes.scoreboardSign;
 import scriptservice.ultra_hardcore.uhc;
 import scriptservice.ultra_hardcore.utils.*;
@@ -65,15 +66,24 @@ public class playerJoinQuitEvent extends initManager implements Listener {
             event.setJoinMessage(joinMessage);
         }
 
-        // add scoreboard
+        // -- specific active logic
         final Optional<activePlayer> optionalActivePlayer = gameUtil.isPlayerActive(player);
         optionalActivePlayer.ifPresent(activePlayer -> {
+            // set connected
+            activePlayer.setConnected(true);
+
+            // create scoreboard
             final scoreboardSign scoreboard = gameUtil.createScoreboard(activePlayer.getUUID());
             activePlayer.setScoreboard(scoreboard);
 
+            // update all scoreboard
             gameUtil.updateAllScoreboard(activePlayer.getUUID(), scoreboard);
         }); // hein? wtf? trop bien // ok j'ai compris en vrai (je crois)
 
+        // -- all active logic
+        for (activePlayer activePlayer: gameUtil.getActivePlayers()) {
+            gameUtil.updateScoreboard(activePlayer, scoreboardLines.PLAYERS, gameUtil.getActivePlayers(true).size());
+        }
     }
 
     @EventHandler
@@ -84,8 +94,23 @@ public class playerJoinQuitEvent extends initManager implements Listener {
         // remove scoreboard from global scoreboard list
         gameUtil.removeScoreboard(player);
 
-        // remove scoreboard from activePlayer
+        // -- specific active logic
         final Optional<activePlayer> optionalActivePlayer = gameUtil.isPlayerActive(player);
-        optionalActivePlayer.ifPresent(activePlayer -> activePlayer.setScoreboard(null));
+        optionalActivePlayer.ifPresent(activePlayer -> {
+            // disconnect player
+            activePlayer.setConnected(false);
+
+            // remove scoreboard
+            scoreboardSign scoreboard = activePlayer.getScoreboard();
+            if (scoreboard != null) {
+                scoreboard.destroy();
+                activePlayer.setScoreboard(null);
+            }
+        });
+
+        // -- all active logic
+        for (activePlayer activePlayer: gameUtil.getActivePlayers()) {
+            gameUtil.updateScoreboard(activePlayer, scoreboardLines.PLAYERS, gameUtil.getActivePlayers(true).size());
+        }
     }
 }

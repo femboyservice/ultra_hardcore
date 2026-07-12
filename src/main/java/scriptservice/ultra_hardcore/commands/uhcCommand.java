@@ -131,11 +131,8 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
                 return;
             }
 
-            // set main world
-            gameUtil.setWorldName(player.getWorld().getName());
-
-            // launch
-            gameUtil.startSTART();
+            // command logic
+            gameUtil.start(player);
         }
 
         private static void commandStop(Player player) {
@@ -148,40 +145,8 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
                 return;
             }
 
-            // stop for each gameState
-            final states gameState = plugin.getGameConfig().getGameState();
-            switch (gameState) {
-                case WAIT:
-                    // nothing to stop (srupid)
-                    languageUtil.sendS(player, "uhc-command-stop-nothing");
-                    return;
-
-
-                case START:
-                    // stop start timers ?
-                    gameUtil.stopSTART();
-                    return;
-
-
-                case TELEPORT:
-                    return; // cuz fuck you (you had 10 SECONDS !!)
-
-                case PREGAME:
-                    // clear player inventories, effects, extra health, remove scoreboard
-                    gameUtil.stopPREGAME();
-                    return;
-                case GAME:
-                    // PREGAME + destroy joueur class
-                    gameUtil.stopGAME();
-
-                    return;
-                case END:
-                    player.sendMessage(ChatColor.RED + "pas fait");
-                    return;
-
-
-                default: // not possible? || who tf set state to CHAT_(DISABLED || ENABLED) || NIGHT || DAY ??
-            }
+            // command logic
+            gameUtil.stop(player);
         }
 
         private static void commandSetGroup(Player player, String arg) {
@@ -200,7 +165,7 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
                 return;
             }
 
-            // check arg
+            // check arg & command logic
             try {
                 gameUtil.setGroup(player, Integer.parseInt(arg));
             } catch (Exception e) {

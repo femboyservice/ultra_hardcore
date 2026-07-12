@@ -196,14 +196,30 @@ public class gameUtil extends initManager {
         return Player_Active.values();
     }
 
-    public Optional<activePlayer> isPlayerActive(Player player) {
+    public Collection<activePlayer> getActivePlayers(boolean connected) {
+        Collection<activePlayer> collection = new ArrayList<>();
         for (activePlayer activePlayer: getActivePlayers()) {
-            if (activePlayer.getUUID().equals(player.getUniqueId())) {
+            if (activePlayer.isConnected() == connected) {
+                collection.add(activePlayer);
+            }
+        }
+
+        return collection;
+    }
+
+    public Optional<activePlayer> isPlayerActive(UUID uuid) {
+        for (activePlayer activePlayer: getActivePlayers()) {
+            if (activePlayer.getUUID().equals(uuid)) {
                 return Optional.of(activePlayer);
             }
         }
 
         return Optional.empty();
+    }
+
+    public Optional<activePlayer> isPlayerActive(Player player) {
+        if (player == null) {return Optional.empty();}
+        return isPlayerActive(player.getUniqueId());
     }
 
     // scoreboards
@@ -332,8 +348,54 @@ public class gameUtil extends initManager {
         commandSender.sendMessage(languageUtil.gets("uhc-command-setgroup-new-group", new Object[]{group}));
     }
 
+    public void stop(Player commandSender) {
+        // stop for each gameState
+        final states gameState = plugin.getGameConfig().getGameState();
+        switch (gameState) {
+            case WAIT:
+                // nothing to stop (srupid)
+                languageUtil.sendS(commandSender, "uhc-command-stop-nothing");
+                return;
+
+
+            case START:
+                // stop start timers ?
+                stopSTART();
+                return;
+
+
+            case TELEPORT:
+                return; // cuz fuck you (you had 10 SECONDS !!)
+
+            case GAME:
+                // clear player inventories, effects, extra health, remove scoreboard
+                stopGAME();
+
+                return;
+            case END:
+                commandSender.sendMessage(ChatColor.RED + "pas fait ;L");
+                return;
+
+
+            default: // not possible? || who tf set state to CHAT_(DISABLED || ENABLED) || NIGHT || DAY ??
+        }
+    }
+
+    public void start(Player commandSender) {
+        // set main world
+        setWorldName(commandSender.getWorld().getName());
+
+        // launch
+        startSTART();
+    }
+
+    // timer stuff
+    public void teleport() {
+        startTELEPORT();
+    }
+
     // starts
-    public void startSTART() {
+    private void startSTART() {
         // set state
         plugin.getGameConfig().setGameState(states.START);
 
@@ -344,7 +406,7 @@ public class gameUtil extends initManager {
         timerUtil.startCountdown(3);
     }
 
-    public void startTELEPORT() {
+    private void startTELEPORT() {
         // set state
         plugin.getGameConfig().setGameState(states.TELEPORT);
 
@@ -366,20 +428,20 @@ public class gameUtil extends initManager {
 
                 // teleport with delay
                 player.teleport(platformLocation);
-                playerUtil.sendMessageToAll(languageUtil.gets("pregame-teleport", new Object[]{player.getName()}));
+                playerUtil.sendMessageToAll(languageUtil.gets("uhc-teleport", new Object[]{player.getName()}));
             } else {
                 // -- spectators
                 getWorld().ifPresent(world -> player.teleport(new Location(world, 0, world.getHighestBlockYAt(0, 0), 0)));
             }
         } // TODO :: tps fix ?
 
-        // start PREGAME
-        startPREGAME();
+        // start game
+        startGAME();
     }
 
-    public void startPREGAME() {
+    private void startGAME() {
         // set state
-        plugin.getGameConfig().setGameState(states.PREGAME);
+        plugin.getGameConfig().setGameState(states.GAME);
 
         // schedule task 5 sec later
         Timer tempTimer = new Timer();
@@ -414,6 +476,21 @@ public class gameUtil extends initManager {
                         // setup infos
                         activePlayer.setAlive(true);
                         activePlayer.setScoreboard(createScoreboard(player));
+
+                        // set no damage ticks to 5 secs
+                        final int time = 5; // in seconds
+                        activePlayer.setInvincible(true);
+
+                        // send start and end message
+                        player.sendMessage(languageUtil.gets("uhc-invincibility-start", new Object[]{time}));
+                        plugin.getServer().getScheduler().runTaskLater(
+                                plugin,
+                                () -> {
+                                    activePlayer.setInvincible(false);
+                                    player.sendMessage(languageUtil.gets("uhc-invincibility-end"));
+                                },
+                                convertionUtil.secondToTick(time)
+                        );
                     }
 
                     // TODO :: setup spectators
@@ -439,20 +516,25 @@ public class gameUtil extends initManager {
         }, Calendar.getInstance().getTime(), (long) convertionUtil.secondToMillisecond(1));
     }
 
-    public void startGAME() {
-        // set state
-        plugin.getGameConfig().setGameState(states.GAME);
-        // TODO
-    }
-
-    public void startEND() {
+    private void startEND(activePlayer winner) {
         // set state
         plugin.getGameConfig().setGameState(states.END);
-        // TODO
+
+        // send chat closing message
+        playerUtil.sendMessageToAll(languageUtil.gets("uhc-end-closing"));
+
+        // send title winner
+        playerUtil.sendTitleToAll(languageUtil.gets("uhc-end-title"), languageUtil.gets("uhc-end-subtitle", new Object[]{winner.getPlayer().getName()}), 5, 40, 5);
+
+        // TODO :: fireworks
+        //  game stats (time)
+        //  winner stats in chat
+        //  topkill, topassist
+        //  kill/assist leaderboard
     }
 
     // stops
-    public void stopSTART() {
+    private void stopSTART() {
         // set state
         plugin.getGameConfig().setGameState(states.WAIT);
 
@@ -460,7 +542,7 @@ public class gameUtil extends initManager {
         timerUtil.stopCountdown(true);
     }
 
-    public void stopPREGAME() {
+    private void stopGAME() {
         // clear player inventories, effects, extra health, remove scoreboard
         // set state
         plugin.getGameConfig().setGameState(states.WAIT);
@@ -517,11 +599,8 @@ public class gameUtil extends initManager {
 
         // enable chat
         plugin.getGameConfig().setChatState(states.CHAT_ENABLED);
-    }
 
-    public void stopGAME() {
-        stopPREGAME();
-
-        // destroy joueur class
+        // send message
+        playerUtil.sendMessageToAll(languageUtil.gets("uhc-chat-now-enabled"));
     }
 }

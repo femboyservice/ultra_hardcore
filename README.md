@@ -15,7 +15,8 @@
         - *actionName* :: renvoie une description de *actionName*.
     - start :: active le cooldown pour commencer l'uhc
     - stop :: stop le cooldown (si il est actif)
-    - setgroup <integer> :: change les groupes à <integer>
+    - setgroup:: change la limite de groupe
+        - nombre :: nombre de personne max. dans un group
     - settings :: ouvre un inventaire avec tous les settings changeable de l'uhc
         - click droit :: pas fait :L
         - click gauche :: pas fait :P

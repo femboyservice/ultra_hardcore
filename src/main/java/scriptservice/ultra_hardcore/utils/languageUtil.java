@@ -221,6 +221,22 @@ public class languageUtil extends initManager {
 
 
 
+            case "uhc-end-title":
+                return (
+                        "" + ChatColor.DARK_GREEN + ChatColor.BOLD + "FIN DE LA PARTIE"
+                        );
+            case "uhc-end-subtitle":
+                if (objects.length != 1) {return (codename+"-not-enough-args");}
+                return (
+                        (ChatColor.WHITE + "Victoire de ") + (ChatColor.GREEN + objects[0].toString()) + (ChatColor.WHITE + ".")
+                );
+            case "uhc-end-closing":
+                return (
+                        getValidPrefix() + (ChatColor.WHITE + "Fermeture de la partie dans ") + (ChatColor.DARK_GREEN + "1 minute") + (ChatColor.WHITE + ".")
+                        );
+
+
+
             case "uhc-chat-enabled":
                 return (ChatColor.GREEN+"Le chat est activé."); // alors, faudra me dire quand je l'utiliserai mais je vois pas trop ^^'
             case "uhc-chat-disabled":
@@ -232,7 +248,14 @@ public class languageUtil extends initManager {
 
 
 
-            case "pregame-teleport":
+            case "uhc-invincibility-start":
+                if (objects.length != 1) {return (codename+"-not-enough-args");}
+                return getInfoPrefix() + (ChatColor.WHITE + "Vous devenez invulnérable pendant ") + (ChatColor.GREEN + objects[0].toString() + " secondes") + (ChatColor.WHITE+".");
+            case "uhc-invincibility-end":
+                return getInfoPrefix() + (ChatColor.WHITE+"Vous redevenez vulnérables aux dégâts.");
+
+
+            case "uhc-teleport":
                 if (objects.length != 1) {return (codename+"-not-enough-args");}
                 return getInfoPrefix() + (ChatColor.WHITE + "Téléportation de ") + (ChatColor.GREEN + objects[0].toString()) + (ChatColor.WHITE + ".");
         }
@@ -253,15 +276,5 @@ public class languageUtil extends initManager {
     public static void sendS(Player player, String codename) {
         if (player == null) {return;}
         player.sendMessage(gets(codename, null));
-    }
-
-    public static void sendM(Player player, String codename, Object[] objects) {
-        if (player == null) {return;}
-        player.sendMessage(getm(codename, objects));
-    }
-
-    public static void sendM(Player player, String codename) {
-        if (player == null) {return;}
-        player.sendMessage(getm(codename, null));
     }
 }

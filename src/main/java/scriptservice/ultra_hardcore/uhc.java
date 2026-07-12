@@ -40,10 +40,12 @@ public final class uhc extends JavaPlugin {
         // events
         final bucketLimiter bucketLimiter = new bucketLimiter(plugin);
         final chatListener chatListener = new chatListener(plugin);
+        final damageLimiter damageLimiter = new damageLimiter(plugin);
         final damagePatcher damagePatcher = new damagePatcher(plugin);
         final enchantmentLimiter enchantmentLimiter = new enchantmentLimiter(plugin);
         final playerJoinQuitEvent playerJoinQuitEvent = new playerJoinQuitEvent(plugin);
         final projectileLimiter projectileLimiter = new projectileLimiter(plugin);
+        final statsTracker statsTracker = new statsTracker(plugin);
         // commands
         final uhcCommand uhcCommand = new uhcCommand(plugin);
         final scenariosCommand scenariosCommand = new scenariosCommand(plugin);
@@ -55,7 +57,7 @@ public final class uhc extends JavaPlugin {
         //--// init
         // utils
         for (initManager util: new initManager[]{
-                bucketLimiter, chatListener, damagePatcher, enchantmentLimiter, playerJoinQuitEvent, projectileLimiter, // events
+                bucketLimiter, chatListener, damageLimiter, damagePatcher, enchantmentLimiter, playerJoinQuitEvent, projectileLimiter, statsTracker, // events
                 apolloUtil, timerUtil, gameUtil, // utils
                 uhcCommand, scenariosCommand, // commands
         }) {

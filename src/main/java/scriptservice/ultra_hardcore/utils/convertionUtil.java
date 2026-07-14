@@ -1,5 +1,6 @@
 package scriptservice.ultra_hardcore.utils;
 
+import org.bukkit.Location;
 import org.bukkit.plugin.PluginManager;
 import scriptservice.ultra_hardcore.classes.initManager;
 import scriptservice.ultra_hardcore.uhc;
@@ -55,5 +56,11 @@ public class convertionUtil extends initManager {
         return (
                 (hrsInt) == 0 ? ((mnsInt) == 0 ? (secInt) + "s" : (mnsInt) + "m" + (sec) + "s") : (hrsInt) + "h" + (mns) + "m" + (sec) + "s"
         );
+    }
+
+    public static double distance2D(Location a, Location b) {
+        double dx = a.getX() - b.getX();
+        double dz = a.getZ() - b.getZ();
+        return Math.sqrt(dx * dx + dz * dz);
     }
 }

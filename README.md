@@ -42,4 +42,7 @@
 > ## Credits
 > - [@NickNqck](https://github.com/NickNqck)
 >   - critPatch & strengthPatch
+>   - arrowUtil (from zephyr API)
+> - Akira
+>   - Inspiration du JJK UHC pour l'organisation du scoreboard
 

@@ -1,8 +1,10 @@
 package scriptservice.ultra_hardcore.utils;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitRunnable;
 import scriptservice.ultra_hardcore.classes.activePlayer;
 import scriptservice.ultra_hardcore.classes.initManager;
 import scriptservice.ultra_hardcore.classes.scoreboardLines;
@@ -27,6 +29,8 @@ public class timerUtil extends initManager {
     }
 
     // per-class vars
+    private BukkitRunnable borderRunnable;
+
     private Timer countdownTimer;
     private TimerTask countdownTimerTask;
 
@@ -96,6 +100,45 @@ public class timerUtil extends initManager {
         // send message
         if (sendMessage) {
              playerUtil.sendMessageToAll(languageUtil.gets("uhc-command-stop"));
+        }
+    }
+
+    // border_distance
+    public void startScoreboardBorder() {
+        borderRunnable = new BukkitRunnable() {
+            @Override
+            public void run() {
+                final Location worldCenter = gameUtil.getWorldCenter();
+                if (worldCenter == null) {return;}
+
+                for (activePlayer activePlayer: gameUtil.getActivePlayers(true)) {
+                    // no player == no update
+                    if (activePlayer.getPlayer() == null) {return;}
+
+                    // get distance
+                    final int distance = (int) Math.round(convertionUtil.distance2D(activePlayer.getPlayer().getLocation(), worldCenter));
+
+                    // get arrow
+                    String arrow = arrowUtil.calculateArrow(activePlayer.getPlayer(), worldCenter);
+                    if (arrow == null) {arrow = "?";}
+
+                    // send it
+                    gameUtil.updateScoreboard(
+                            activePlayer,
+                            scoreboardLines.BORDER_DISTANCE,
+                            (ChatColor.GREEN + arrow + " " + distance)
+                    );
+                }
+            }
+        };
+
+        borderRunnable.runTaskTimer(plugin, 0L, 2L);
+    }
+
+    public void stopScoreboardBorder() {
+        if (borderRunnable != null) {
+            borderRunnable.cancel();
+            borderRunnable = null;
         }
     }
 

@@ -69,8 +69,9 @@ public class playerJoinQuitEvent extends initManager implements Listener {
         // -- specific active logic
         final Optional<activePlayer> optionalActivePlayer = gameUtil.isPlayerActive(player);
         optionalActivePlayer.ifPresent(activePlayer -> {
-            // set connected
+            // update infos
             activePlayer.setConnected(true);
+            activePlayer.update(player);
 
             // create scoreboard
             final scoreboardSign scoreboard = gameUtil.createScoreboard(activePlayer.getUUID());

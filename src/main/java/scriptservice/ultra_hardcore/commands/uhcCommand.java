@@ -9,7 +9,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.StringUtil;
 import scriptservice.ultra_hardcore.classes.initManager;
-import scriptservice.ultra_hardcore.classes.states;
+import scriptservice.ultra_hardcore.classes.subcommand;
+import scriptservice.ultra_hardcore.commands.subcommands.uhc.*;
 import scriptservice.ultra_hardcore.uhc;
 
 import scriptservice.ultra_hardcore.utils.*;
@@ -25,31 +26,40 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
         super(plugin);
     }
 
-    // init
-    private static gameUtil gameUtil;
-
-    @Override
-    public void init(PluginManager pluginManager) {
-        gameUtil = plugin.gameUtil;
-
-        plugin.getCommand("uhc").setExecutor(this);
-        plugin.getCommand("uhc").setTabCompleter(this);
-    }
-
     // command stuff
     private static final ArrayList<String> mainCommands = new ArrayList<>(); {
         mainCommands.add("help");
+        mainCommands.add("say");
         mainCommands.add("start");
         mainCommands.add("stop");
         mainCommands.add("setgroup");
         mainCommands.add("settings");
     }
 
-    private static final ArrayList<String> secondCommands = new ArrayList<>(); {
-        secondCommands.add("start");
-        secondCommands.add("stop");
-        secondCommands.add("setgroup");
-        secondCommands.add("settings");
+    private static final ArrayList<String> secondCommands = (ArrayList<String>) mainCommands.clone();
+    static {
+        secondCommands.remove("help");
+    }
+
+    // init
+    private static final HashMap<String, subcommand> subCommands = new HashMap<>();
+    private static final HashMap<String, Object[]> subCommandsObjects = new HashMap<>();
+
+    @Override
+    public void init(PluginManager pluginManager) {
+        // register commands
+        plugin.getCommand("uhc").setExecutor(this);
+        plugin.getCommand("uhc").setTabCompleter(this);
+
+        // put subCommands
+        subCommands.put("help", new help(plugin));
+        subCommands.put("say", new say(plugin));
+        subCommands.put("setgroup", new setgroup(plugin));
+        subCommands.put("start", new start(plugin));
+        subCommands.put("stop", new stop(plugin));
+
+        // put subCommandsObjects (on va me crasher dessus pour ceci mais nsr)
+        subCommandsObjects.put("help", new Object[]{mainCommands});
     }
 
     // command executor
@@ -59,24 +69,12 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
             final Player player = (Player) commandSender;
             final int argsAmount = strings.length;
             String actionName;
-            String arg = null;
 
             if (argsAmount == 0) {
                 actionName = "help";
                 // donnes des informations sur l'uhc (% d'effet, limite de stuff, etc.)
-            } else if (argsAmount == 1) {
+            } else if (argsAmount <= 2) {
                 final String subCommand = strings[0].toLowerCase();
-
-                if (mainCommands.contains(subCommand)) {
-                    actionName = subCommand;
-                } else {
-                    player.sendMessage(languageUtil.gets("general-command-introuvable", new Object[]{subCommand}));
-                    return true;
-                    // introuvable
-                }
-            } else if (argsAmount == 2) {
-                final String subCommand = strings[0].toLowerCase();
-                arg = strings[1];
 
                 if (mainCommands.contains(subCommand)) {
                     actionName = subCommand;
@@ -87,13 +85,24 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
                 }
 
             } else {
-                // euh, trop d'args
-                player.sendMessage(languageUtil.gets("general-command-too-many-args", new Object[]{2, argsAmount}));
-                return true;
+                final String subCommand = strings[0].toLowerCase();
+                actionName = subCommand;
+
+                if (!subCommand.equalsIgnoreCase("say")) {
+                    // euh, trop d'args
+                    player.sendMessage(languageUtil.gets("general-command-too-many-args", new Object[]{2, argsAmount}));
+                    return true;
+                }
             }
 
             // handle actionName
-            commandUtil.run(player, actionName, arg);
+            final subcommand subcommand = subCommands.get(actionName);
+            final Object[] objects = subCommandsObjects.getOrDefault(actionName, null);
+            if (subcommand != null) {
+                subcommand.run(player, strings, objects); // je te promets que si je dois envoyer 14 millard d'info, je le fait - femboysanslimite, 14/07/2026, 11:13 UTC+2
+            } else {
+                player.sendMessage(languageUtil.getErrorPrefix() + (ChatColor.WHITE + "J'ai pas encore fait la sous-commande ") + (ChatColor.AQUA + actionName) + (ChatColor.WHITE + ", donc faut attendre."));
+            }
         }
 
         return true;
@@ -112,98 +121,5 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
         }
 
         return completions;
-    }
-
-    public static class commandUtil {
-        private static void commandStart(Player player) {
-            if (player == null) {return;}
-
-            // not op
-            final boolean isOp = player.isOp();
-            if (!isOp) {
-                languageUtil.sendS(player, "noperms");
-                return;
-            }
-
-            // already started
-            if (plugin.getGameConfig().getGameState() != states.WAIT) {
-                languageUtil.sendS(player, "uhc-command-start-already");
-                return;
-            }
-
-            // command logic
-            gameUtil.start(player);
-        }
-
-        private static void commandStop(Player player) {
-            if (player == null) {return;}
-
-            // not op
-            final boolean isOp = player.isOp();
-            if (!isOp) {
-                languageUtil.sendS(player, "noperms");
-                return;
-            }
-
-            // command logic
-            gameUtil.stop(player);
-        }
-
-        private static void commandSetGroup(Player player, String arg) {
-            if (player == null) {return;}
-
-            // not op
-            final boolean isOp = player.isOp();
-            if (!isOp) {
-                languageUtil.sendS(player, "noperms");
-                return;
-            }
-
-            // check gameState
-            if (plugin.getGameConfig().getGameState() == states.WAIT) {
-                player.sendMessage(languageUtil.gets("uhc-command-setgroup-game-not-started"));
-                return;
-            }
-
-            // check arg & command logic
-            try {
-                gameUtil.setGroup(player, Integer.parseInt(arg));
-            } catch (Exception e) {
-                player.sendMessage(languageUtil.gets("global-command-arg-not-integer", new Object[]{arg}));
-            }
-        }
-
-        public static void run(Player player, String actionName, String arg) {
-            switch (actionName) {
-                case "help":
-                    if (arg == null || arg.isEmpty()) {
-                        player.sendMessage(languageUtil.getm("uhc-command-help"));
-                    } else {
-                        arg = arg.toLowerCase();
-                        if (mainCommands.contains(arg)) {
-                            player.sendMessage(languageUtil.getm("uhc-command" + "-" + arg + "-help"));
-                        } else {
-                            player.sendMessage(languageUtil.gets("general-command-introuvable", new Object[]{arg}));
-                        }
-                    }
-
-                    break;
-                case "start":
-                    commandStart(player);
-                    break;
-                case "stop":
-                    commandStop(player);
-                    break;
-                case "setgroup":
-                    commandSetGroup(player, arg);
-                    break;
-
-                case "abracadabra": // me demande pas pourquoi
-                    break;
-                default:
-                    player.sendMessage(languageUtil.getErrorPrefix() + (ChatColor.WHITE + "J'ai pas encore fait la sous-commande ") + (ChatColor.AQUA + actionName) + (ChatColor.WHITE + ", donc faut attendre."));
-                    break;
-            }
-        }
     }
 }

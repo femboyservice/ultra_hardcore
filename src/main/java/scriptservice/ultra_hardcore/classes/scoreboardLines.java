@@ -4,16 +4,17 @@ import lombok.Getter;
 
 public enum scoreboardLines {
     PLAYERS(2, "Joueurs"),
-    GAME_TIME(3, "Durée"),
-    GROUPS(4, "Groupes"),
+    GROUPS(3, "Groupes"),
+    GAME_TIME(4, "Durée"),
     KILLS(7, "Kills"),
     ASSISTS(8, "Assists"),
     BORDER(11, "Taille"),
-    DATE(13, ""),
+    BORDER_DISTANCE(12, "Distance"),
 
     // en uhc classique ya pas hein
-    CYCLE(999+1, "Cycle"),
-    EPISODE(999+2, "Épisode");
+    DATE(999+3, "Date"),
+    CYCLE(999+2, "Cycle"),
+    EPISODE(999+1, "Épisode");
 
 
     @Getter private final int line;

@@ -73,6 +73,15 @@ public class languageUtil extends initManager {
                         (ChatColor.DARK_GRAY + "[") + (ChatColor.AQUA+"ⓘ") + (ChatColor.DARK_GRAY + "]") + (ChatColor.WHITE + " Permet de changer la limite de groupe."),
                         (ChatColor.DARK_GRAY + "[") + (ChatColor.AQUA+"ⓤ") + (ChatColor.DARK_GRAY + "]") + (ChatColor.DARK_AQUA + " /uhc setgroup ") + (ChatColor.AQUA+"<nombre>")
                 };
+
+
+            case "uhc-command-say":
+                if (objects.length != 2) {return new String[]{codename+"-not-enough-args"};}
+                return new String[]{
+                        (" "),
+                        (ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "[HOST]") + (ChatColor.RESET + " " + ChatColor.GREEN + ChatColor.BOLD + objects[0].toString()) + (ChatColor.RESET + "" + ChatColor.DARK_GRAY + " » ") + (ChatColor.WHITE + objects[1].toString()),
+                        (" ")
+                };
         }
 
         return new String[]{codename + "-not-found-multiple"};
@@ -163,10 +172,6 @@ public class languageUtil extends initManager {
 
             case "uhc-command-start-already":
                 return getErrorPrefix() + (ChatColor.RED + "La partie a déjà commencé");
-            case "uhc-command-stop-nothing":
-                return getErrorPrefix() + (ChatColor.RED + "La partie n'a pas encore commencé");
-            case "uhc-command-stop":
-                return getInfoPrefix() + ("Annulation du lancement de la partie.");
             case "uhc-command-start-teleport": // utilisation de "§" car c'est dans l'action bar
                 return "§f" + "Téléportation des joueurs.";
             case "uhc-command-start-timer": // utilisation de "§" car c'est dans l'action bar
@@ -174,6 +179,11 @@ public class languageUtil extends initManager {
                 return "§f" + "Démarrage de la partie dans " +
                         "§2" + objects[0].toString() + "s" +
                         "§f" + ".";
+
+            case "uhc-command-stop-nothing":
+                return getErrorPrefix() + (ChatColor.RED + "La partie n'a pas encore commencé");
+            case "uhc-command-stop":
+                return getInfoPrefix() + ("Annulation du lancement de la partie.");
 
 
 
@@ -253,6 +263,7 @@ public class languageUtil extends initManager {
                 return getInfoPrefix() + (ChatColor.WHITE + "Vous devenez invulnérable pendant ") + (ChatColor.GREEN + objects[0].toString() + " secondes") + (ChatColor.WHITE+".");
             case "uhc-invincibility-end":
                 return getInfoPrefix() + (ChatColor.WHITE+"Vous redevenez vulnérables aux dégâts.");
+
 
 
             case "uhc-teleport":

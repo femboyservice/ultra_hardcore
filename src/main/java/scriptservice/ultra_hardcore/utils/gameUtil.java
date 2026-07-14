@@ -9,8 +9,6 @@ import org.bukkit.plugin.PluginManager;
 import scriptservice.ultra_hardcore.classes.*;
 import scriptservice.ultra_hardcore.uhc;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class gameUtil extends initManager {
@@ -85,6 +83,10 @@ public class gameUtil extends initManager {
 
     public double getWorldBorderSize() {
         return getWorld().map(world -> (world.getWorldBorder().getSize() / 2)).orElse(0.0); // olala
+    }
+
+    public Location getWorldCenter() {
+        return getWorld().map(world -> new Location(world, 0, world.getHighestBlockYAt(0, 0), 0)).orElse(null);
     }
 
     private void setBlockType(Block block, Material material) {
@@ -224,20 +226,22 @@ public class gameUtil extends initManager {
 
     // scoreboards
     public scoreboardSign createScoreboard(Player player) {
+        if (player == null) {return null;}
         final UUID uuid = player.getUniqueId();
         scoreboardSign scoreboard = scoreboardSigns.get(uuid);
 
         if (scoreboard != null) {
             return scoreboard;
         } else {
-            scoreboard = new scoreboardSign(player, (ChatColor.DARK_GREEN+""+ChatColor.BOLD+" ultra_hardcore  "));
+            // (ChatColor.GRAY + "Date: " + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(LocalDateTime.now()))
+            scoreboard = new scoreboardSign(player, (ChatColor.DARK_GREEN+""+ChatColor.BOLD+"ultra_hardcore   "));
             scoreboard.create();
 
             scoreboard.setLine(0, (" "));
             scoreboard.setLine(1,  ((ChatColor.DARK_GREEN+"▏ ") + (""+ChatColor.WHITE+ChatColor.BOLD+"Partie")));
             scoreboard.setLine(scoreboardLines.PLAYERS,  ((ChatColor.DARK_GRAY +" ▪ ") + (ChatColor.WHITE+"Joueurs: ") + (ChatColor.GREEN+"0")));
-            scoreboard.setLine(scoreboardLines.GAME_TIME,  ((ChatColor.DARK_GRAY +" ▪ ") + (ChatColor.WHITE+"Durée: ") + (ChatColor.GREEN+"0s")));
             scoreboard.setLine(scoreboardLines.GROUPS,  ((ChatColor.DARK_GRAY +" ▪ ") + (ChatColor.WHITE+"Groupes: ") + (ChatColor.GREEN+"0")));
+            scoreboard.setLine(scoreboardLines.GAME_TIME,  ((ChatColor.DARK_GRAY +" ▪ ") + (ChatColor.WHITE+"Durée: ") + (ChatColor.GREEN+"0s")));
             scoreboard.setLine(5,  ("  "));
             scoreboard.setLine(6,  ((ChatColor.DARK_GREEN+"▏ ") + (""+ChatColor.WHITE+ChatColor.BOLD+"Informations")));
             scoreboard.setLine(scoreboardLines.KILLS,  ((ChatColor.DARK_GRAY +" ▪ ") + (ChatColor.WHITE+"Kills: ") + (ChatColor.GREEN+"0")));
@@ -245,8 +249,8 @@ public class gameUtil extends initManager {
             scoreboard.setLine(9, ("   "));
             scoreboard.setLine(10, ((ChatColor.DARK_GREEN+"▏ ") + (""+ChatColor.WHITE+ChatColor.BOLD+"Bordure")));
             scoreboard.setLine(scoreboardLines.BORDER, ((ChatColor.DARK_GRAY +" ▪ ") + (ChatColor.WHITE+"Taille: ") + (ChatColor.GREEN+"± 0.0")));
-            scoreboard.setLine(12, ("    "));
-            scoreboard.setLine(scoreboardLines.DATE, (ChatColor.GRAY + DateTimeFormatter.ofPattern("dd/MM/yyyy").format(LocalDateTime.now())));
+            scoreboard.setLine(scoreboardLines.BORDER_DISTANCE, ((ChatColor.DARK_GRAY +" ▪ ") + (ChatColor.WHITE+"Distance: ") + (ChatColor.GREEN+"? 0")));
+            scoreboard.setLine(13, ("    "));
             scoreboard.setLine(14, ((ChatColor.GRAY+""+ChatColor.ITALIC+"Dev by " + ownerName)));
 
             scoreboardSigns.put(uuid, scoreboard);
@@ -321,6 +325,7 @@ public class gameUtil extends initManager {
     }
 
     public void removeScoreboard(Player player) {
+        if (player == null) {return;}
         removeScoreboard(player.getUniqueId());
     }
 
@@ -387,6 +392,11 @@ public class gameUtil extends initManager {
 
         // launch
         startSTART();
+    }
+
+    public void say(Player commandSender, String content) {
+        // send it
+        playerUtil.sendMessageToAll(languageUtil.getm("uhc-command-say", new Object[]{commandSender.getName(), content}));
     }
 
     // timer stuff
@@ -505,6 +515,7 @@ public class gameUtil extends initManager {
 
                     // start timers
                     timerUtil.startInGame();
+                    timerUtil.startScoreboardBorder();
                     // timerUtil.startCycle();
                     // timerUtil.startEpisode();
 
@@ -549,6 +560,7 @@ public class gameUtil extends initManager {
 
         // stop timers
         timerUtil.stopInGame();
+        timerUtil.stopScoreboardBorder();
         timerUtil.stopCycle();
         timerUtil.stopEpisode();
         timerUtil.stopCountdown(false);

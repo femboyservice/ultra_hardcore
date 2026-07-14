@@ -75,6 +75,11 @@ public class activePlayer {
         setScoreboard(null);
     }
 
+    public void update(Player newPlayer) {
+        setPlayer(newPlayer);
+        setUUID(newPlayer.getUniqueId());
+    }
+
     public void addKill() {
        kills++;
     }

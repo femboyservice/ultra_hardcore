@@ -42,7 +42,9 @@ public class damagePatcher extends initManager implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // askip c'est mieux
     public void onEvent(EntityDamageByEntityEvent event) {
         // check if game started, if not, cancel event (no damage !!)
-        if (plugin.getGameConfig().getGameState() == states.WAIT) {
+        final states currentGameState = plugin.getGameConfig().getGameState();
+        if (currentGameState == states.WAIT || currentGameState == states.TELEPORT) {
+            event.setDamage(0.0);
             event.setCancelled(true);
         } else {
             critUtil.patch(event, plugin.getGameConfig().getCritPercentage()); // patch crit damages

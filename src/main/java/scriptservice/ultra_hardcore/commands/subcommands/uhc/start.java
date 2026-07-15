@@ -28,7 +28,10 @@ public class start extends subcommand {
             return;
         }
 
-        // command logic
-        gameUtil.start(commandSender);
+        // set main world
+        gameUtil.setWorldName(commandSender.getWorld().getName());
+
+        // launch
+        gameUtil.start(states.START);
     }
 }

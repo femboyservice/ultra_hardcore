@@ -4,7 +4,6 @@ import org.bukkit.entity.Player;
 import scriptservice.ultra_hardcore.classes.subcommand;
 import scriptservice.ultra_hardcore.uhc;
 import scriptservice.ultra_hardcore.utils.languageUtil;
-import scriptservice.ultra_hardcore.utils.playerUtil;
 
 import java.util.ArrayList;
 
@@ -18,13 +17,10 @@ public class help extends subcommand {
         if (objects == null || objects.length == 0) {return;}
         if (commandSender == null) {return;}
 
-        final String arg = (strings.length >= 2 ? strings[1].toLowerCase() : "").toLowerCase();
+        final String arg = (strings.length > 0 ? strings[0].toLowerCase() : "").toLowerCase();
         final ArrayList<String> mainCommands = (ArrayList<String>) objects[0];
 
         if (mainCommands == null) {return;}
-
-        playerUtil.sendMessageToAll("arg: " + arg);
-        playerUtil.sendMessageToAll("mainCommands: " + mainCommands);
 
         if (arg.isEmpty()) {
             commandSender.sendMessage(languageUtil.getm("uhc-command-help"));

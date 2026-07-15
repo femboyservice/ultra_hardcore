@@ -14,9 +14,8 @@ public abstract class subcommand {
     // constructor
     public subcommand(uhc plugin) {
         subcommand.plugin = plugin;
-        this.gameUtil = plugin.gameUtil;
-        this.apolloUtil = plugin.apolloUtil;
-
+        this.gameUtil = plugin.getGameUtil();
+        this.apolloUtil = plugin.getApolloUtil();
     }
 
     // methods

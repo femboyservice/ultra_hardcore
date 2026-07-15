@@ -7,6 +7,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.plugin.PluginManager;
 import scriptservice.ultra_hardcore.classes.activePlayer;
 import scriptservice.ultra_hardcore.classes.initManager;
+import scriptservice.ultra_hardcore.classes.states;
 import scriptservice.ultra_hardcore.uhc;
 import scriptservice.ultra_hardcore.utils.gameUtil;
 
@@ -26,12 +27,20 @@ public class damageLimiter extends initManager implements Listener {
 
     @Override
     public void init(PluginManager pluginManager) {
-        gameUtil = plugin.gameUtil;
+        gameUtil = plugin.getGameUtil();
         pluginManager.registerEvents(this, plugin); // register event
     }
 
     @EventHandler()
     public void onEntityDamageEvent(EntityDamageEvent event) {
+        // if state == wait || tp :: cancel
+        final states currentGameState = plugin.getGameConfig().getGameState();
+        if (currentGameState == states.WAIT || currentGameState == states.TELEPORT) {
+            event.setDamage(0.0);
+            event.setCancelled(true);
+            return;
+        }
+
         // entity not player
         if (!(event.getEntity() instanceof Player)) {return;}
         final Player player = (Player) event.getEntity();
@@ -41,8 +50,9 @@ public class damageLimiter extends initManager implements Listener {
         if (!optionalActivePlayer.isPresent()) {return;}
         final activePlayer activePlayer = optionalActivePlayer.get();
 
-        // cancel damage
+        // cancel damage from active player
         if (activePlayer.isInvincible()) {
+            event.setDamage(0.0);
             event.setCancelled(true);
         }
     }

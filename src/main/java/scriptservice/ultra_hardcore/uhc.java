@@ -21,11 +21,14 @@ public final class uhc extends JavaPlugin {
     @Getter private final gameConfig gameConfig = new gameConfig();
 
     // utils
-    public apolloUtil apolloUtil;
-    public gameUtil gameUtil;
-    public timerUtil timerUtil;
+    @Getter private apolloUtil apolloUtil;
+    @Getter private gameUtil gameUtil;
+    @Getter private timerUtil timerUtil;
 
     public scenarioManager[] scenarioManagers;
+
+    // event w/ utils
+    @Getter private movementLimiter movementLimiter; // jsp si je suis fan, mais j'ai pas d'autre idée en tête..
 
     @Override
     public void onEnable() {
@@ -38,34 +41,20 @@ public final class uhc extends JavaPlugin {
         gameUtil = new gameUtil(plugin);
         timerUtil = new timerUtil(plugin);
         // events
-        final bucketLimiter bucketLimiter = new bucketLimiter(plugin);
-        final chatListener chatListener = new chatListener(plugin);
-        final damageLimiter damageLimiter = new damageLimiter(plugin);
-        final damagePatcher damagePatcher = new damagePatcher(plugin);
-        final enchantmentLimiter enchantmentLimiter = new enchantmentLimiter(plugin);
-        final playerJoinQuitEvent playerJoinQuitEvent = new playerJoinQuitEvent(plugin);
-        final projectileLimiter projectileLimiter = new projectileLimiter(plugin);
-        final statsTracker statsTracker = new statsTracker(plugin);
-        // commands
-        final uhcCommand uhcCommand = new uhcCommand(plugin);
-        final scenariosCommand scenariosCommand = new scenariosCommand(plugin);
-        // scenarios
-        final stoneVariant scenario_stoneVariant = new stoneVariant(plugin);
-        final quiver scenario_quiver = new quiver(plugin);
-        final cutClean scenario_cutClean = new cutClean(plugin);
-        final rodless scenario_rodless = new rodless(plugin);
+        movementLimiter = new movementLimiter(plugin);
         //--// init
         // utils
         for (initManager util: new initManager[]{
-                bucketLimiter, chatListener, damageLimiter, damagePatcher, enchantmentLimiter, playerJoinQuitEvent, projectileLimiter, statsTracker, // events
+                new bucketLimiter(plugin), new chatListener(plugin), new damageLimiter(plugin), new damagePatcher(plugin), new enchantmentLimiter(plugin), movementLimiter,
+                new playerJoinQuitEvent(plugin), new projectileLimiter(plugin), new statsTracker(plugin), // events
                 apolloUtil, timerUtil, gameUtil, // utils
-                uhcCommand, scenariosCommand, // commands
+                new uhcCommand(plugin), new scenariosCommand(plugin), // commands
         }) {
             util.init(pluginManager);
         }
 
         // scenarios
-        scenarioManagers = new scenarioManager[]{scenario_cutClean, scenario_stoneVariant, scenario_quiver, scenario_rodless};
+        scenarioManagers = new scenarioManager[]{new cutClean(plugin), new stoneVariant(plugin), new quiver(plugin), new rodless(plugin)};
         for (scenarioManager scenario: scenarioManagers) {
             scenario.init(pluginManager);
         }

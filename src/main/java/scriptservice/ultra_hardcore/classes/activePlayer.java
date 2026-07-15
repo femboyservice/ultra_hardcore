@@ -3,6 +3,8 @@ package scriptservice.ultra_hardcore.classes;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import scriptservice.ultra_hardcore.uhc;
 
@@ -64,6 +66,25 @@ public class activePlayer {
     }
 
     // methods
+    public void setGameMode(GameMode gameMode) {
+        if (getPlayer() != null) {
+            getPlayer().setGameMode(gameMode);
+        }
+    }
+
+    public void respawn() {
+        if (getPlayer() != null) {
+            getPlayer().spigot().respawn();
+        }
+    }
+
+    public void teleport(Entity entity) {
+        if (getPlayer() != null) {
+            getPlayer().teleport(entity);
+        }
+    }
+
+
     public void destroy() {
         setPlayer(null);
         setUUID(null);

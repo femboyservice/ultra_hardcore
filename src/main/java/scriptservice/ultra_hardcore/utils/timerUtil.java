@@ -25,7 +25,7 @@ public class timerUtil extends initManager {
 
     @Override
     public void init(PluginManager pluginManager) {
-        gameUtil = plugin.gameUtil;
+        gameUtil = plugin.getGameUtil();
     }
 
     // per-class vars
@@ -73,7 +73,7 @@ public class timerUtil extends initManager {
                     playerUtil.playSoundToAll(Sound.CHICKEN_EGG_POP);
 
                     // start teleport phase
-                    gameUtil.teleport();
+                    gameUtil.start(states.TELEPORT);
 
                     // set to null
                     stopCountdown(false);

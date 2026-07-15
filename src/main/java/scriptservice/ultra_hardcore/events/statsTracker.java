@@ -9,9 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.plugin.PluginManager;
-import scriptservice.ultra_hardcore.classes.activePlayer;
 import scriptservice.ultra_hardcore.classes.initManager;
-import scriptservice.ultra_hardcore.classes.scoreboardLines;
 import scriptservice.ultra_hardcore.uhc;
 import scriptservice.ultra_hardcore.utils.convertionUtil;
 import scriptservice.ultra_hardcore.utils.gameUtil;
@@ -33,7 +31,7 @@ public class statsTracker extends initManager implements Listener {
 
     @Override
     public void init(PluginManager pluginManager) {
-        gameUtil = plugin.gameUtil;
+        gameUtil = plugin.getGameUtil();
         pluginManager.registerEvents(this, plugin); // register event
 
         final long ticks = (long) convertionUtil.minuteToTick(1);
@@ -45,52 +43,11 @@ public class statsTracker extends initManager implements Listener {
         final Player victim = event.getEntity();
         if (victim == null || victim.getUniqueId() == null) {return;}
 
-        final Optional<activePlayer> optionalActiveVictim = gameUtil.isPlayerActive(victim);
+        // cancel message
+        event.setDeathMessage(null);
 
-        // victim isn't active
-        if (!optionalActiveVictim.isPresent()) {return;}
-        final activePlayer activeVictim = optionalActiveVictim.get();
-
-        final Player killer = victim.getKiller();
-        final Optional<activePlayer> optionalActiveKiller = gameUtil.isPlayerActive(killer);
-
-        // killer isn't active
-        if (!optionalActiveKiller.isPresent()) {return;}
-        final activePlayer activeKiller = optionalActiveKiller.get();
-
-        // -- KILL
-        if (! (activeKiller.getUUID().equals(activeVictim.getUUID()))) {
-            // add kill to killer
-            activeKiller.addKill();
-            // update scoreboard
-            gameUtil.updateScoreboard(activeKiller, scoreboardLines.KILLS, activeKiller.getKills());
-        }
-
-        // -- ASSISTS
-        HashMap<UUID, Long> damagers = recentDamagers.get(victim.getUniqueId());
-        if (damagers != null) {
-            long now = System.currentTimeMillis();
-
-            for (Map.Entry<UUID, Long> entry : damagers.entrySet()) {
-                final UUID attackerUUID = entry.getKey();
-                final long lastHit = entry.getValue();
-
-                boolean isKiller = attackerUUID.equals(killer.getUniqueId());
-                boolean withinWindow = (now - lastHit) <= plugin.getGameConfig().getAssistDelayWindow();
-
-                if (!isKiller && withinWindow) {
-                    // check if active
-                    final Optional<activePlayer> optionalActiveAttacker = gameUtil.isPlayerActive(attackerUUID);
-                    if (!optionalActiveAttacker.isPresent()) {return;}
-                    final activePlayer activeAttacker = optionalActiveAttacker.get();
-
-                    // add assist to attacker
-                    activeAttacker.addAssist();
-                    // update scoreboard
-                    gameUtil.updateScoreboard(activeAttacker, scoreboardLines.ASSISTS, activeAttacker.getAssists());
-                }
-            }
-        }
+        // run death logic
+        gameUtil.deathEvent(victim, recentDamagers);
     }
 
     @EventHandler(ignoreCancelled = true)

@@ -26,6 +26,7 @@ public class gameConfig {
     @Getter @Setter private states cycle = states.NIGHT;
 
     @Getter @Setter private double borderSize = 200;
+    @Getter private final double platformMaxOut = 10.0;
 
     @Getter @Setter private int gameEpisode = 0;
     @Getter @Setter private int gameGroups = 1;

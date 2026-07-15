@@ -5,8 +5,7 @@ import org.bukkit.entity.Player;
 import scriptservice.ultra_hardcore.classes.subcommand;
 import scriptservice.ultra_hardcore.uhc;
 import scriptservice.ultra_hardcore.utils.languageUtil;
-
-import java.util.Arrays;
+import scriptservice.ultra_hardcore.utils.playerUtil;
 
 public class say extends subcommand {
     public say(uhc plugin) {
@@ -26,9 +25,11 @@ public class say extends subcommand {
 
         // get full message
         StringBuilder content = new StringBuilder();
-        Arrays.stream(strings).skip(1).forEach(string -> content.append(ChatColor.translateAlternateColorCodes('&', string)).append(" "));
+        for (String string: strings) {
+            content.append(ChatColor.translateAlternateColorCodes('&', string)).append(" ");
+        }
 
         // send it
-        gameUtil.say(commandSender, content.toString());
+        playerUtil.sendMessageToAll(languageUtil.getm("uhc-command-say", new Object[]{commandSender.getName(), content.toString()}));
     }
 }

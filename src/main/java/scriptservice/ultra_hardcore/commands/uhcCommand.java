@@ -96,10 +96,11 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
             }
 
             // handle actionName
+            final String[] sentStrings = Arrays.stream(strings).skip(1).toArray(String[]::new);
             final subcommand subcommand = subCommands.get(actionName);
             final Object[] objects = subCommandsObjects.getOrDefault(actionName, null);
             if (subcommand != null) {
-                subcommand.run(player, strings, objects); // je te promets que si je dois envoyer 14 millard d'info, je le fait - femboysanslimite, 14/07/2026, 11:13 UTC+2
+                subcommand.run(player, sentStrings, objects); // je te promets que si je dois envoyer 14 millard d'info, je le fait - femboysanslimite, 14/07/2026, 11:13 UTC+2
             } else {
                 player.sendMessage(languageUtil.getErrorPrefix() + (ChatColor.WHITE + "J'ai pas encore fait la sous-commande ") + (ChatColor.AQUA + actionName) + (ChatColor.WHITE + ", donc faut attendre."));
             }

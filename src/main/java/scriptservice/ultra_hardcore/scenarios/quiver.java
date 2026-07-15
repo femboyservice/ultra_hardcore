@@ -30,7 +30,7 @@ public class quiver extends scenarioManager implements Listener {
     private gameUtil gameUtil;
     @Override
     public void init(PluginManager pluginManager) {
-        gameUtil = plugin.gameUtil;
+        gameUtil = plugin.getGameUtil();
         pluginManager.registerEvents(this, plugin); // register event
 
         // define class stuff

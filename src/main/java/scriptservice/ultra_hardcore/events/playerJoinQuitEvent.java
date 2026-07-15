@@ -7,14 +7,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
-import scriptservice.ultra_hardcore.classes.activePlayer;
 import scriptservice.ultra_hardcore.classes.initManager;
-import scriptservice.ultra_hardcore.classes.scoreboardLines;
-import scriptservice.ultra_hardcore.classes.scoreboardSign;
 import scriptservice.ultra_hardcore.uhc;
 import scriptservice.ultra_hardcore.utils.*;
-
-import java.util.Optional;
 
 /**
  * event usage: Global
@@ -32,8 +27,8 @@ public class playerJoinQuitEvent extends initManager implements Listener {
 
     @Override
     public void init(PluginManager pluginManager) {
-        gameUtil = plugin.gameUtil;
-        apolloUtil = plugin.apolloUtil;
+        gameUtil = plugin.getGameUtil();
+        apolloUtil = plugin.getApolloUtil();
         lunarclientExclusif = (boolean) plugin.getPluginConfig().get("lunarclientExclusif");
 
         pluginManager.registerEvents(this, plugin); // register event
@@ -66,25 +61,8 @@ public class playerJoinQuitEvent extends initManager implements Listener {
             event.setJoinMessage(joinMessage);
         }
 
-        // -- specific active logic
-        final Optional<activePlayer> optionalActivePlayer = gameUtil.isPlayerActive(player);
-        optionalActivePlayer.ifPresent(activePlayer -> {
-            // update infos
-            activePlayer.setConnected(true);
-            activePlayer.update(player);
-
-            // create scoreboard
-            final scoreboardSign scoreboard = gameUtil.createScoreboard(activePlayer.getUUID());
-            activePlayer.setScoreboard(scoreboard);
-
-            // update all scoreboard
-            gameUtil.updateAllScoreboard(activePlayer.getUUID(), scoreboard);
-        }); // hein? wtf? trop bien // ok j'ai compris en vrai (je crois)
-
-        // -- all active logic
-        for (activePlayer activePlayer: gameUtil.getActivePlayers()) {
-            gameUtil.updateScoreboard(activePlayer, scoreboardLines.PLAYERS, gameUtil.getActivePlayers(true).size());
-        }
+        // run join logic
+        gameUtil.joinEvent(player);
     }
 
     @EventHandler
@@ -92,26 +70,7 @@ public class playerJoinQuitEvent extends initManager implements Listener {
         final Player player = event.getPlayer();
         event.setQuitMessage(languageUtil.gets("player-leave", new Object[]{player.getName()}));
 
-        // remove scoreboard from global scoreboard list
-        gameUtil.removeScoreboard(player);
-
-        // -- specific active logic
-        final Optional<activePlayer> optionalActivePlayer = gameUtil.isPlayerActive(player);
-        optionalActivePlayer.ifPresent(activePlayer -> {
-            // disconnect player
-            activePlayer.setConnected(false);
-
-            // remove scoreboard
-            scoreboardSign scoreboard = activePlayer.getScoreboard();
-            if (scoreboard != null) {
-                scoreboard.destroy();
-                activePlayer.setScoreboard(null);
-            }
-        });
-
-        // -- all active logic
-        for (activePlayer activePlayer: gameUtil.getActivePlayers()) {
-            gameUtil.updateScoreboard(activePlayer, scoreboardLines.PLAYERS, gameUtil.getActivePlayers(true).size());
-        }
+        // run leave logic
+        gameUtil.quitEvent(player);
     }
 }

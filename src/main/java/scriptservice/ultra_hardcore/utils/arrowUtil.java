@@ -1,3 +1,11 @@
+/*
+ * This file is based on ArrowTargetUtils.java from the UHC_Meetup project
+ * by NickNqck (https://github.com/NickNqck/UHC_Meetup),
+ * licensed under the GNU Affero General Public License v3.0.
+ *
+ * Modifications: final added to all arrows
+ */
+
 package scriptservice.ultra_hardcore.utils;
 
 import org.bukkit.Location;

@@ -1,3 +1,11 @@
+/*
+ * This file is based on PatchCritical.java from the UHC_Meetup project
+ * by NickNqck (https://github.com/NickNqck/UHC_Meetup),
+ * licensed under the GNU Affero General Public License v3.0.
+ *
+ * Modifications: re-organisation
+ */
+
 package scriptservice.ultra_hardcore.events;
 
 import com.google.common.collect.Multimap;

@@ -24,9 +24,10 @@ public class say extends subcommand {
         }
 
         // get full message
-        StringBuilder content = new StringBuilder();
+        final StringBuilder content = new StringBuilder();
         for (String string: strings) {
-            content.append(ChatColor.translateAlternateColorCodes('&', string)).append(" ");
+            content.append(ChatColor.translateAlternateColorCodes('&', string));
+            if (!strings[strings.length - 1].equals(string)) {content.append(" ");}
         }
 
         // send it

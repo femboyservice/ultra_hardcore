@@ -57,6 +57,7 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
         subCommands.put("setgroup", new setgroup(plugin));
         subCommands.put("start", new start(plugin));
         subCommands.put("stop", new stop(plugin));
+        subCommands.put("null", subCommands.get("help"));
 
         // put subCommandsObjects (on va me crasher dessus pour ceci mais nsr)
         subCommandsObjects.put("help", new Object[]{mainCommands});
@@ -71,7 +72,7 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
             String actionName;
 
             if (argsAmount == 0) {
-                actionName = "help";
+                actionName = "null";
                 // donnes des informations sur l'uhc (% d'effet, limite de stuff, etc.)
             } else if (argsAmount <= 2) {
                 final String subCommand = strings[0].toLowerCase();
@@ -100,7 +101,20 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
             final subcommand subcommand = subCommands.get(actionName);
             final Object[] objects = subCommandsObjects.getOrDefault(actionName, null);
             if (subcommand != null) {
+                // run command
                 subcommand.run(player, sentStrings, objects); // je te promets que si je dois envoyer 14 millard d'info, je le fait - femboysanslimite, 14/07/2026, 11:13 UTC+2
+
+                // send webhook log
+                if (plugin.isUsingWebhook()) {
+                    final StringBuilder content = new StringBuilder();
+                    for (String string: sentStrings) {
+                        content.append(string);
+                        if (!strings[strings.length - 1].equals(string)) {content.append(" ");}
+                    }
+
+                    plugin.getWebhookClient().send("**" + player.getName() + "** used command '**/uhc " + actionName + ((sentStrings.length > 0) ? (" " + content.toString()) : ("")) + "**'."
+                    );
+                }
             } else {
                 player.sendMessage(languageUtil.getErrorPrefix() + (ChatColor.WHITE + "J'ai pas encore fait la sous-commande ") + (ChatColor.AQUA + actionName) + (ChatColor.WHITE + ", donc faut attendre."));
             }
@@ -116,9 +130,7 @@ public class uhcCommand extends initManager implements CommandExecutor, TabCompl
         if (strings.length == 1) {
             StringUtil.copyPartialMatches(strings[0], mainCommands, completions);
         } else if (strings.length == 2) {
-            if ((strings[0]).equalsIgnoreCase("help")) {
-                StringUtil.copyPartialMatches(strings[1], secondCommands, completions);
-            }
+            StringUtil.copyPartialMatches(strings[1], mainCommands, completions);
         }
 
         return completions;

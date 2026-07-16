@@ -1,5 +1,7 @@
 package scriptservice.ultra_hardcore;
 
+import club.minnced.discord.webhook.WebhookClient;
+import club.minnced.discord.webhook.WebhookClientBuilder;
 import lombok.Getter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
@@ -19,6 +21,9 @@ public final class uhc extends JavaPlugin {
     // plugin config
     @Getter private final FileConfiguration pluginConfig = getConfig();
     @Getter private final gameConfig gameConfig = new gameConfig();
+    @Getter private String webhookURL;
+    @Getter private boolean usingWebhook = false;
+    @Getter private WebhookClient webhookClient;
 
     // utils
     @Getter private apolloUtil apolloUtil;
@@ -35,14 +40,14 @@ public final class uhc extends JavaPlugin {
         // Plugin startup logic
         final PluginManager pluginManager = getServer().getPluginManager();
 
-        //--// create
+        // -- create
         // utils
         apolloUtil = new apolloUtil(plugin);
         gameUtil = new gameUtil(plugin);
         timerUtil = new timerUtil(plugin);
         // events
         movementLimiter = new movementLimiter(plugin);
-        //--// init
+        // -- init
         // utils
         for (initManager util: new initManager[]{
                 new bucketLimiter(plugin), new chatListener(plugin), new damageLimiter(plugin), new damagePatcher(plugin), new enchantmentLimiter(plugin), movementLimiter,
@@ -59,11 +64,25 @@ public final class uhc extends JavaPlugin {
             scenario.init(pluginManager);
         }
 
-        //--// yaml config
+        // -- yaml config
+        // get config
         pluginConfig.options().copyDefaults(true);
         saveConfig();
+
+        // set config stuff
+        webhookURL = (String) pluginConfig.get("discordWebhook");
+        usingWebhook = !(webhookURL.equals("YOUR_WEBHOOK_HERE"));
+        if (usingWebhook) {
+            webhookClient = new WebhookClientBuilder(webhookURL).build();
+            webhookClient.send("**[<:strength:1475996145343008838>] Server started.**");
+        }
     }
 
     @Override
-    public void onDisable() {}
+    public void onDisable() {
+        if (usingWebhook) {
+            webhookClient.send("**[<:weakness:1475996166750470347>] Server stopped.**");
+            webhookClient = null;
+        }
+    }
 }

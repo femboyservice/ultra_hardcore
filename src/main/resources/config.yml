@@ -1,1 +1,5 @@
+# ingame
 lunarclientExclusif: false
+
+# discord
+discordWebhook: "YOUR_WEBHOOK_HERE"
